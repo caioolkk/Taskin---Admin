@@ -1,8 +1,5 @@
 {
   "rewrites": [
-    { "source": "/admin", "destination": "/admin.html" },
-    { "source": "/admin.html", "destination": "/admin.html" }
-  ],
-  "cleanUrls": true,
-  "trailingSlash": false
+    { "source": "/(.*)", "destination": "/admin.html" }
+  ]
 }
