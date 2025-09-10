@@ -26,7 +26,6 @@
         }
         h1 { font-size: 2rem; }
         h2 { font-size: 1.5rem; }
-        
         /* CARD */
         .card {
             background: white;
@@ -36,7 +35,6 @@
             margin-bottom: 30px;
             border: 1px solid #e2e8f0;
         }
-        
         /* BOTÕES */
         .btn {
             display: inline-flex;
@@ -86,7 +84,6 @@
             cursor: not-allowed;
             transform: none;
         }
-        
         /* TABELAS */
         .table-container {
             overflow-x: auto;
@@ -117,7 +114,6 @@
         tr:hover {
             background-color: #f8fafc;
         }
-        
         /* STATUS */
         .status-badge {
             display: inline-block;
@@ -143,7 +139,6 @@
             background-color: #f0fff4;
             color: #2f855a;
         }
-        
         /* NOTIFICAÇÕES */
         .notification {
             position: fixed;
@@ -174,7 +169,6 @@
         .notification.info {
             background-color: #4299e1;
         }
-        
         /* TABS */
         .tabs {
             display: flex;
@@ -212,7 +206,6 @@
         .tab.logout:hover {
             background: #c53030;
         }
-        
         /* FORMULÁRIOS */
         .form-group {
             margin-bottom: 20px;
@@ -241,7 +234,6 @@
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 20px;
         }
-        
         /* SPINNER */
         .spinner {
             display: inline-block;
@@ -258,7 +250,6 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-        
         /* HEADER */
         .header {
             background: white;
@@ -284,7 +275,6 @@
             font-weight: 600;
             color: #2d3748;
         }
-        
         /* RESPONSIVE */
         @media (max-width: 768px) {
             .container {
@@ -313,7 +303,6 @@
             </div>
             <div class="header-title">Painel Administrativo</div>
         </div>
-
         <!-- LOGIN -->
         <div id="adminLogin" class="card">
             <h2><i class="fas fa-lock"></i> Login de Administrador</h2>
@@ -333,7 +322,6 @@
                 </button>
             </form>
         </div>
-
         <!-- PAINEL ADMIN -->
         <div id="adminPanel" style="display: none;">
             <div class="tabs">
@@ -353,7 +341,6 @@
                     <i class="fas fa-sign-out-alt"></i> Sair
                 </button>
             </div>
-
             <!-- TAREFAS PENDENTES -->
             <div id="pendingContent" class="content active">
                 <div class="card">
@@ -383,7 +370,6 @@
                     </div>
                 </div>
             </div>
-
             <!-- GERENCIAR TAREFAS -->
             <div id="tasksContent" class="content">
                 <div class="card">
@@ -429,7 +415,6 @@
                         <div id="addTaskNotification" style="margin-top: 20px; display: none;"></div>
                     </form>
                 </div>
-                
                 <div class="card" style="margin-top: 30px;">
                     <h3><i class="fas fa-list"></i> Tarefas Ativas</h3>
                     <div class="table-container">
@@ -456,7 +441,6 @@
                     </div>
                 </div>
             </div>
-
             <!-- USUÁRIOS -->
             <div id="usersContent" class="content">
                 <div class="card">
@@ -486,7 +470,6 @@
                     </div>
                 </div>
             </div>
-
             <!-- SAQUES -->
             <div id="withdrawalsContent" class="content">
                 <div class="card">
@@ -518,64 +501,52 @@
                 </div>
             </div>
         </div>
-
         <!-- NOTIFICAÇÃO -->
         <div id="notification" class="notification">
             <i class="fas fa-bell"></i>
             <span id="notificationMessage">Mensagem</span>
         </div>
     </div>
-
     <script>
         // URL da API (CORRIGIDA - sem espaços)
         const API_BASE_URL = 'https://taskin-backend-in81.onrender.com/api';
         let adminToken = null;
-
         // Função para mostrar notificações
         function showNotification(message, type = 'success') {
             const notification = document.getElementById('notification');
             const messageElement = document.getElementById('notificationMessage');
-            
             messageElement.textContent = message;
             notification.className = `notification ${type}`;
             notification.style.display = 'flex';
-            
             setTimeout(() => {
                 notification.style.display = 'none';
             }, 3000);
         }
-
         // Função para requisições à API
         async function apiRequest(url, options = {}) {
             const defaultHeaders = { 
                 'Content-Type': 'application/json',
                 'Accept': 'application/json'
             };
-            
             if (adminToken) {
                 defaultHeaders['Authorization'] = `Bearer ${adminToken}`;
             }
-            
             const config = { 
                 ...options, 
                 headers: { ...defaultHeaders, ...options.headers } 
             };
-            
             try {
                 const response = await fetch(`${API_BASE_URL}${url}`, config);
-                
                 if (!response.ok) {
                     const errorData = await response.json().catch(() => ({}));
                     throw new Error(errorData.error || `Erro ${response.status}: ${response.statusText}`);
                 }
-                
                 return await response.json();
             } catch (error) {
                 console.error('API Error:', error);
                 throw error;
             }
         }
-
         // Função para renderizar tarefas pendentes
         async function renderPendingTasks() {
             const tableBody = document.getElementById('pendingTasksTableBody');
@@ -587,10 +558,8 @@
                     </td>
                 </tr>
             `;
-
             try {
                 const data = await apiRequest('/admin/tasks/pending');
-                
                 if (data.length === 0) {
                     tableBody.innerHTML = `
                         <tr>
@@ -603,12 +572,10 @@
                     `;
                     return;
                 }
-
                 tableBody.innerHTML = '';
                 data.forEach(task => {
                     const row = document.createElement('tr');
                     const submittedAt = new Date(task.submitted_at).toLocaleString('pt-BR');
-                    
                     row.innerHTML = `
                         <td>
                             <strong>${task.title}</strong>
@@ -653,11 +620,9 @@
                 `;
             }
         }
-
         // Função para aprovar tarefa
         async function approveTask(taskId) {
             if (!confirm('Tem certeza que deseja aprovar esta tarefa? O valor será creditado no saldo do usuário.')) return;
-            
             try {
                 showNotification('Aprovando tarefa...', 'info');
                 await apiRequest(`/admin/tasks/${taskId}/approve`, { 
@@ -670,11 +635,9 @@
                 showNotification(`Erro ao aprovar tarefa: ${error.message}`, 'error');
             }
         }
-
         // Função para recusar tarefa
         async function rejectTask(taskId) {
             if (!confirm('Tem certeza que deseja recusar esta tarefa? O usuário não receberá o valor.')) return;
-            
             try {
                 showNotification('Recusando tarefa...', 'info');
                 await apiRequest(`/admin/tasks/${taskId}/reject`, { 
@@ -686,7 +649,6 @@
                 showNotification(`Erro ao recusar tarefa: ${error.message}`, 'error');
             }
         }
-
         // Função para renderizar usuários
         async function renderUsers() {
             const tableBody = document.getElementById('usersTableBody');
@@ -698,10 +660,8 @@
                     </td>
                 </tr>
             `;
-
             try {
                 const data = await apiRequest('/admin/users');
-                
                 if (data.length === 0) {
                     tableBody.innerHTML = `
                         <tr>
@@ -714,12 +674,10 @@
                     `;
                     return;
                 }
-
                 tableBody.innerHTML = '';
                 data.forEach(user => {
                     const row = document.createElement('tr');
                     const createdAt = new Date(user.created_at).toLocaleDateString('pt-BR');
-                    
                     row.innerHTML = `
                         <td><strong>${user.id}</strong></td>
                         <td>
@@ -753,7 +711,6 @@
                 `;
             }
         }
-
         // Função para renderizar saques
         async function renderWithdrawals() {
             const tableBody = document.getElementById('withdrawalsTableBody');
@@ -765,10 +722,8 @@
                     </td>
                 </tr>
             `;
-
             try {
                 const data = await apiRequest('/admin/withdrawals/pending');
-                
                 if (data.length === 0) {
                     tableBody.innerHTML = `
                         <tr>
@@ -781,12 +736,10 @@
                     `;
                     return;
                 }
-
                 tableBody.innerHTML = '';
                 data.forEach(withdrawal => {
                     const row = document.createElement('tr');
                     const requestedAt = new Date(withdrawal.requested_at).toLocaleDateString('pt-BR');
-                    
                     row.innerHTML = `
                         <td><strong>${withdrawal.id}</strong></td>
                         <td>
@@ -831,12 +784,10 @@
                 `;
             }
         }
-
         // Função para processar saque
         async function processWithdrawal(id, status) {
             const action = status === 'Pago' ? 'pagar' : 'recusar';
             if (!confirm(`Tem certeza que deseja ${action} este saque? Esta ação não pode ser desfeita.`)) return;
-            
             try {
                 showNotification(`Processando saque...`, 'info');
                 await apiRequest(`/admin/withdrawals/${id}/process`, {
@@ -850,11 +801,9 @@
                 showNotification(`Erro ao processar saque: ${error.message}`, 'error');
             }
         }
-
         // Função para adicionar nova tarefa
         async function addNewTask(e) {
             e.preventDefault();
-            
             const title = document.getElementById('taskTitle').value.trim();
             const summary = document.getElementById('taskSummary').value.trim();
             const details = document.getElementById('taskDetails').value.trim();
@@ -862,37 +811,29 @@
             const network = document.getElementById('taskNetwork').value.trim();
             const value = parseFloat(document.getElementById('taskValue').value);
             const max_completions = parseInt(document.getElementById('taskMaxCompletions').value);
-
             const notificationDiv = document.getElementById('addTaskNotification');
             notificationDiv.innerHTML = '';
             notificationDiv.style.display = 'none';
-
             // Validação
             if (!title || !summary || !details || !link || !network || isNaN(value) || isNaN(max_completions)) {
                 showNotification('Por favor, preencha todos os campos corretamente.', 'error');
                 return;
             }
-
             try {
                 const submitBtn = document.querySelector('#addTaskForm button[type="submit"]');
                 submitBtn.disabled = true;
                 submitBtn.innerHTML = '<i class="fas fa-spinner spinner"></i> Adicionando...';
-                
                 const response = await apiRequest('/admin/tasks', {
                     method: 'POST',
                     body: JSON.stringify({ title, summary, details, link, network, value, max_completions })
                 });
-                
                 document.getElementById('addTaskForm').reset();
                 showNotification('Tarefa adicionada com sucesso!', 'success');
-                
                 // Limpa o campo de notificação
                 notificationDiv.innerHTML = '';
                 notificationDiv.style.display = 'none';
-                
                 // Atualiza a lista de tarefas ativas
                 renderActiveTasks();
-                
             } catch (error) {
                 showNotification(`Erro ao adicionar tarefa: ${error.message}`, 'error');
             } finally {
@@ -901,8 +842,8 @@
                 submitBtn.innerHTML = '<i class="fas fa-plus"></i> Adicionar Tarefa';
             }
         }
-
-        // Função para renderizar tarefas ativas
+        // --- INÍCIO DA ALTERAÇÃO CIRÚRGICA ---
+        // Função para renderizar tarefas ativas (IMPLEMENTADA)
         async function renderActiveTasks() {
             const tableBody = document.getElementById('activeTasksTableBody');
             tableBody.innerHTML = `
@@ -913,26 +854,10 @@
                     </td>
                 </tr>
             `;
-
             try {
-                // Para este exemplo, vamos buscar todas as tarefas
-                // Em um sistema real, você teria um endpoint específico para tarefas ativas
-                const response = await fetch(`${API_BASE_URL}/tasks/next`, {
-                    headers: {
-                        'Authorization': `Bearer ${adminToken}`,
-                        'Content-Type': 'application/json'
-                    }
-                });
-                
-                // Como não temos um endpoint específico, vamos simular com dados mock
-                // Em produção, você precisaria criar um endpoint /admin/tasks/active no backend
-                const mockTasks = [
-                    { id: 1, title: "Cadastre-se no Netflix", network: "CPALead", value: 1.50, current_completions: 23, max_completions: 50, status: "active" },
-                    { id: 2, title: "Teste App de Investimentos", network: "Mobidea", value: 2.00, current_completions: 15, max_completions: 30, status: "active" },
-                    { id: 3, title: "Responda Pesquisa de Mercado", network: "AdsTargets", value: 0.80, current_completions: 67, max_completions: 100, status: "active" }
-                ];
-                
-                if (mockTasks.length === 0) {
+                // --- CHAMA A NOVA ROTA DO BACKEND ---
+                const data = await apiRequest('/admin/tasks/active');
+                if (data.length === 0) {
                     tableBody.innerHTML = `
                         <tr>
                             <td colspan="6" style="text-align: center; padding: 40px;">
@@ -944,12 +869,10 @@
                     `;
                     return;
                 }
-
                 tableBody.innerHTML = '';
-                mockTasks.forEach(task => {
+                data.forEach(task => {
                     const progress = Math.round((task.current_completions / task.max_completions) * 100);
                     const statusClass = progress >= 100 ? 'status-rejected' : 'status-approved';
-                    
                     const row = document.createElement('tr');
                     row.innerHTML = `
                         <td><strong>${task.id}</strong></td>
@@ -984,20 +907,21 @@
                             <i class="fas fa-exclamation-triangle" style="font-size: 48px; color: #e53e3e; margin-bottom: 20px;"></i>
                             <h3 style="margin-bottom: 10px;">Erro ao carregar tarefas</h3>
                             <p style="color: #e53e3e;">${error.message}</p>
+                            <button class="btn btn-primary" onclick="renderActiveTasks()" style="margin-top: 20px;">
+                                <i class="fas fa-redo"></i> Tentar novamente
+                            </button>
                         </td>
                     </tr>
                 `;
             }
         }
-
+        // --- FIM DA ALTERAÇÃO CIRÚRGICA ---
         // Função para alternar entre abas
         function switchTab(tabName) {
             document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
             document.querySelectorAll('.content').forEach(content => content.classList.remove('active'));
-
             document.querySelector(`.tab[data-tab="${tabName}"]`).classList.add('active');
             document.getElementById(`${tabName}Content`).classList.add('active');
-
             // Carrega o conteúdo da aba selecionada
             if (tabName === 'pending') {
                 renderPendingTasks();
@@ -1006,12 +930,11 @@
             } else if (tabName === 'withdrawals') {
                 renderWithdrawals();
             } else if (tabName === 'tasks') {
-                renderActiveTasks();
+                renderActiveTasks(); // --- CHAMA A FUNÇÃO CORRIGIDA ---
             } else if (tabName === 'logout') {
                 handleLogout();
             }
         }
-
         // Função para lidar com logout
         function handleLogout() {
             adminToken = null;
@@ -1020,41 +943,39 @@
             document.getElementById('adminLogin').style.display = 'block';
             showNotification('Você saiu do painel administrativo.', 'info');
         }
-
-        // Função para lidar com login
+        // --- INÍCIO DA ALTERAÇÃO CIRÚRGICA ---
+        // Função para lidar com login (CORRIGIDA)
         async function handleLogin(e) {
             e.preventDefault();
             const email = document.getElementById('adminEmail').value.trim();
             const password = document.getElementById('adminPassword').value.trim();
-
             if (!email || !password) {
                 showNotification('Por favor, preencha todos os campos.', 'error');
                 return;
             }
-
             try {
                 const loginBtn = document.querySelector('#adminLoginForm button[type="submit"]');
                 loginBtn.disabled = true;
                 loginBtn.innerHTML = '<i class="fas fa-spinner spinner"></i> Entrando...';
-                
+                // --- CHAMA A ROTA DE LOGIN DO BACKEND ---
                 const response = await apiRequest('/login', {
                     method: 'POST',
                     body: JSON.stringify({ email, password })
                 });
-
-                // Verifica se o usuário é administrador (no backend, você pode adicionar um campo is_admin)
-                // Por enquanto, vamos manter a verificação por e-mail
-                if (response.user && response.token) {
-                    adminToken = response.token;
-                    localStorage.setItem('taskinAdminToken', adminToken);
-                    
-                    document.getElementById('adminLogin').style.display = 'none';
-                    document.getElementById('adminPanel').style.display = 'block';
-                    switchTab('pending');
-                    
-                    showNotification('Bem-vindo ao painel administrativo!', 'success');
+                if (response.token && response.user) {
+                    // --- VERIFICA SE O E-MAIL É O DO ADMIN ---
+                    if (response.user.email === 'admin@taskin.com') {
+                        adminToken = response.token;
+                        localStorage.setItem('taskinAdminToken', adminToken);
+                        document.getElementById('adminLogin').style.display = 'none';
+                        document.getElementById('adminPanel').style.display = 'block';
+                        switchTab('pending');
+                        showNotification('Bem-vindo ao painel administrativo!', 'success');
+                    } else {
+                        showNotification('Acesso negado. Área restrita a administradores.', 'error');
+                    }
                 } else {
-                    showNotification('Credenciais inválidas ou acesso não autorizado.', 'error');
+                    showNotification('Credenciais inválidas.', 'error');
                 }
             } catch (error) {
                 showNotification(`Erro ao fazer login: ${error.message}`, 'error');
@@ -1064,30 +985,38 @@
                 loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Entrar';
             }
         }
-
+        // --- FIM DA ALTERAÇÃO CIRÚRGICA ---
         // Inicialização
         document.addEventListener('DOMContentLoaded', function() {
             // Verifica se já está logado
             const savedToken = localStorage.getItem('taskinAdminToken');
             if (savedToken) {
                 adminToken = savedToken;
-                document.getElementById('adminLogin').style.display = 'none';
-                document.getElementById('adminPanel').style.display = 'block';
-                switchTab('pending');
+                // --- TENTA VALIDAR O TOKEN EXISTENTE ---
+                // Para isso, podemos fazer uma chamada simples a uma rota protegida.
+                // Vamos usar /admin/users, que é uma rota que só admin pode acessar.
+                apiRequest('/admin/users')
+                    .then(() => {
+                        // Se a chamada for bem-sucedida, o token é válido.
+                        document.getElementById('adminLogin').style.display = 'none';
+                        document.getElementById('adminPanel').style.display = 'block';
+                        switchTab('pending');
+                    })
+                    .catch(() => {
+                        // Se falhar, o token é inválido ou expirou.
+                        localStorage.removeItem('taskinAdminToken');
+                        showNotification('Sessão expirada. Por favor, faça login novamente.', 'info');
+                    });
             }
-
             // Eventos
             document.getElementById('adminLoginForm').addEventListener('submit', handleLogin);
-            
             document.querySelectorAll('.tab').forEach(tab => {
                 tab.addEventListener('click', function() {
                     const tabName = this.getAttribute('data-tab');
                     switchTab(tabName);
                 });
             });
-
             document.getElementById('addTaskForm').addEventListener('submit', addNewTask);
-
             console.log('Painel Administrativo Taskin carregado.');
         });
     </script>
