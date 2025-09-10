@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taskin - Painel Administrativo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8;
+            color: #2d3748;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        h1, h2, h3 { margin-bottom: 20px; color: #2d3748; }
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            text-align: center;
+        }
+        .btn-primary { background-color: #48bb78; color: white; }
+        .btn-primary:hover { background-color: #38a169; }
+        .btn-success { background-color: #38a169; color: white; }
+        .btn-success:hover { background-color: #2f855a; }
+        .btn-danger { background-color: #e53e3e; color: white; }
+        .btn-danger:hover { background-color: #c53030; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        th { background-color: #f7fafc; font-weight: 600; }
+        .status-pending { color: #dd6b20; font-weight: bold; }
+        .status-approved { color: #2f855a; font-weight: bold; }
+        .status-rejected { color: #e53e3e; font-weight: bold; }
+        .notification {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 6px;
+            color: white;
+            font-weight: 500;
+        }
+        .notification.success { background-color: #48bb78; }
+        .notification.error { background-color: #e53e3e; }
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 10px;
+        }
+        .tab {
+            padding: 10px 20px;
+            border-radius: 6px 6px 0 0;
+            cursor: pointer;
+            background-color: #e2e8f0;
+            font-weight: 500;
+        }
+        .tab.active {
+            background-color: white;
+            border: 2px solid #e2e8f0;
+            border-bottom: none;
+            font-weight: 700;
+        }
+        .content { display: none; }
+        .content.active { display: block; }
+        #adminLogin, #adminPanel { transition: opacity 0.3s ease; }
+        .form-group { margin-bottom: 15px; }
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+        }
+        .spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #48bb78;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Painel Administrativo - Taskin</h1>
+
+        <div id="adminLogin" class="card">
+            <h2>Login de Administrador</h2>
+            <form id="adminLoginForm">
+                <div class="form-group">
+                    <label for="adminEmail">E-mail</label>
+                    <input type="email" id="adminEmail" class="form-control" required placeholder="admin@taskin.com">
+                </div>
+                <div class="form-group">
+                    <label for="adminPassword">Senha</label>
+                    <input type="password" id="adminPassword" class="form-control" required placeholder="admin123">
+                </div>
+                <button type="submit" class="btn btn-primary">Entrar</button>
+            </form>
+        </div>
+
+        <div id="adminPanel" style="display: none;">
+            <div class="tabs">
+                <div class="tab active" data-tab="pending">Tarefas Pendentes</div>
+                <div class="tab" data-tab="tasks">Gerenciar Tarefas</div>
+                <div class="tab" data-tab="users">Usuários</div>
+                <div class="tab" data-tab="withdrawals">Saques Pendentes</div>
+                <div class="tab" data-tab="logout" style="margin-left: auto; background-color: #e53e3e; color: white;">Sair</div>
+            </div>
+
+            <div id="pendingContent" class="content active">
+                <div class="card">
+                    <h2>Tarefas Pendentes de Aprovação</h2>
+                    <div id="pendingTasksContainer">
+                        <p>Carregando tarefas pendentes...</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tasksContent" class="content">
+                <div class="card">
+                    <h2>Adicionar Nova Tarefa</h2>
+                    <form id="addTaskForm">
+                        <div class="form-group">
+                            <label for="taskTitle">Título</label>
+                            <input type="text" id="taskTitle" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="taskSummary">Resumo</label>
+                            <input type="text" id="taskSummary" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="taskDetails">Detalhes (Instruções)</label>
+                            <textarea id="taskDetails" class="form-control" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="taskLink">Link da Tarefa</label>
+                            <input type="url" id="taskLink" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="taskNetwork">Rede CPA/CPI</label>
+                            <input type="text" id="taskNetwork" class="form-control" required placeholder="Ex: CPALead, Mobidea">
+                        </div>
+                        <div class="form-group">
+                            <label for="taskValue">Valor (R$)</label>
+                            <input type="number" id="taskValue" class="form-control" required min="0.01" step="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label for="taskMaxCompletions">Máximo de Conclusões</label>
+                            <input type="number" id="taskMaxCompletions" class="form-control" required min="1" value="100">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Adicionar Tarefa</button>
+                    </form>
+                    <div class="spinner" id="addTaskSpinner"></div>
+                    <div id="addTaskNotification"></div>
+                </div>
+            </div>
+
+            <div id="usersContent" class="content">
+                <div class="card">
+                    <h2>Todos os Usuários</h2>
+                    <table id="usersTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nome</th>
+                                <th>E-mail</th>
+                                <th>WhatsApp</th>
+                                <th>Saldo</th>
+                                <th>Criado em</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody">
+                            <tr><td colspan="6">Carregando usuários...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="withdrawalsContent" class="content">
+                <div class="card">
+                    <h2>Saques Pendentes</h2>
+                    <table id="withdrawalsTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Usuário</th>
+                                <th>Valor</th>
+                                <th>Chave PIX</th>
+                                <th>Data</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="withdrawalsTableBody">
+                            <tr><td colspan="6">Carregando saques...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="notification" class="notification" style="display: none;"></div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'https://taskin-backend-in81.onrender.com/api';
+        let adminToken = null;
+
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type}`;
+            notification.style.display = 'block';
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 3000);
+        }
+
+        async function apiRequest(url, options = {}) {
+            const defaultHeaders = { 'Content-Type': 'application/json' };
+            if (adminToken) defaultHeaders['Authorization'] = `Bearer ${adminToken}`;
+            const config = { ...options, headers: { ...defaultHeaders, ...options.headers } };
+            try {
+                const response = await fetch(`${API_BASE_URL}${url}`, config);
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.error || 'Erro desconhecido');
+                return data;
+            } catch (error) {
+                console.error('API Error:', error);
+                throw error;
+            }
+        }
+
+        async function renderPendingTasks() {
+            const container = document.getElementById('pendingTasksContainer');
+            container.innerHTML = '<p>Carregando...</p>';
+
+            try {
+                const data = await apiRequest('/admin/tasks/pending');
+                if (data.length === 0) {
+                    container.innerHTML = '<p>Nenhuma tarefa pendente no momento.</p>';
+                    return;
+                }
+
+                let html = '';
+                data.forEach(task => {
+                    html += `
+                        <div class="card" style="margin-bottom: 15px; padding: 15px;">
+                            <h4>${task.title}</h4>
+                            <p><strong>Usuário:</strong> ${task.user_name} (${task.user_email})</p>
+                            <p><strong>Rede:</strong> ${task.network}</p>
+                            <p><strong>Valor:</strong> R$ ${task.value.toFixed(2)}</p>
+                            <p><strong>Link do Comprovante:</strong> <a href="${task.proof_link}" target="_blank">${task.proof_link}</a></p>
+                            <p><strong>Enviado em:</strong> ${new Date(task.submitted_at).toLocaleString('pt-BR')}</p>
+                            <div style="margin-top: 10px;">
+                                <button class="btn btn-success" onclick="approveTask(${task.user_task_id})">Aprovar</button>
+                                <button class="btn btn-danger" onclick="rejectTask(${task.user_task_id})">Recusar</button>
+                            </div>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+            } catch (error) {
+                container.innerHTML = `<p style="color: red;">Erro: ${error.message}</p>`;
+            }
+        }
+
+        async function approveTask(taskId) {
+            if (!confirm('Tem certeza que deseja aprovar esta tarefa?')) return;
+            try {
+                await apiRequest(`/admin/tasks/${taskId}/approve`, { method: 'PUT' });
+                showNotification('Tarefa aprovada e saldo creditado!', 'success');
+                renderPendingTasks();
+            } catch (error) {
+                showNotification(`Erro: ${error.message}`, 'error');
+            }
+        }
+
+        async function rejectTask(taskId) {
+            if (!confirm('Tem certeza que deseja recusar esta tarefa?')) return;
+            try {
+                await apiRequest(`/admin/tasks/${taskId}/reject`, { method: 'PUT' });
+                showNotification('Tarefa recusada.', 'success');
+                renderPendingTasks();
+            } catch (error) {
+                showNotification(`Erro: ${error.message}`, 'error');
+            }
+        }
+
+        async function renderUsers() {
+            const tableBody = document.getElementById('usersTableBody');
+            tableBody.innerHTML = '<tr><td colspan="6">Carregando...</td></tr>';
+
+            try {
+                const data = await apiRequest('/admin/users');
+                tableBody.innerHTML = '';
+                data.forEach(user => {
+                    const row = document.createElement('tr');
+                    const createdAt = new Date(user.created_at).toLocaleDateString('pt-BR');
+                    row.innerHTML = `
+                        <td>${user.id}</td>
+                        <td>${user.name}</td>
+                        <td>${user.email}</td>
+                        <td>${user.whatsapp || 'N/A'}</td>
+                        <td>R$ ${user.balance.toFixed(2)}</td>
+                        <td>${createdAt}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            } catch (error) {
+                tableBody.innerHTML = `<tr><td colspan="6" style="color: red;">Erro: ${error.message}</td></tr>`;
+            }
+        }
+
+        async function renderWithdrawals() {
+            const tableBody = document.getElementById('withdrawalsTableBody');
+            tableBody.innerHTML = '<tr><td colspan="6">Carregando...</td></tr>';
+
+            try {
+                const data = await apiRequest('/admin/withdrawals/pending');
+                tableBody.innerHTML = '';
+                data.forEach(withdrawal => {
+                    const row = document.createElement('tr');
+                    const requestedAt = new Date(withdrawal.requested_at).toLocaleDateString('pt-BR');
+                    row.innerHTML = `
+                        <td>${withdrawal.id}</td>
+                        <td>${withdrawal.user_name} (${withdrawal.user_email})</td>
+                        <td>R$ ${withdrawal.amount.toFixed(2)}</td>
+                        <td>${withdrawal.pix_key}</td>
+                        <td>${requestedAt}</td>
+                        <td>
+                            <button class="btn btn-success" onclick="processWithdrawal(${withdrawal.id}, 'Pago')">Pagar</button>
+                            <button class="btn btn-danger" onclick="processWithdrawal(${withdrawal.id}, 'Recusado')">Recusar</button>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            } catch (error) {
+                tableBody.innerHTML = `<tr><td colspan="6" style="color: red;">Erro: ${error.message}</td></tr>`;
+            }
+        }
+
+        async function processWithdrawal(id, status) {
+            if (!confirm(`Tem certeza que deseja marcar este saque como "${status}"?`)) return;
+            try {
+                await apiRequest(`/admin/withdrawals/${id}/process`, {
+                    method: 'PUT',
+                    body: JSON.stringify({ status })
+                });
+                showNotification(`Saque ${status.toLowerCase()} com sucesso!`, 'success');
+                renderWithdrawals();
+            } catch (error) {
+                showNotification(`Erro: ${error.message}`, 'error');
+            }
+        }
+
+        async function addNewTask(e) {
+            e.preventDefault();
+            const title = document.getElementById('taskTitle').value;
+            const summary = document.getElementById('taskSummary').value;
+            const details = document.getElementById('taskDetails').value;
+            const link = document.getElementById('taskLink').value;
+            const network = document.getElementById('taskNetwork').value;
+            const value = parseFloat(document.getElementById('taskValue').value);
+            const max_completions = parseInt(document.getElementById('taskMaxCompletions').value);
+
+            const notificationDiv = document.getElementById('addTaskNotification');
+            notificationDiv.innerHTML = '';
+            notificationDiv.style.display = 'none';
+
+            try {
+                document.getElementById('addTaskSpinner').style.display = 'inline-block';
+                const response = await apiRequest('/admin/tasks', {
+                    method: 'POST',
+                    body: JSON.stringify({ title, summary, details, link, network, value, max_completions })
+                });
+                document.getElementById('addTaskForm').reset();
+                notificationDiv.innerHTML = `<p style="color: green;">${response.message}</p>`;
+                notificationDiv.style.display = 'block';
+                showNotification('Tarefa adicionada com sucesso!', 'success');
+            } catch (error) {
+                notificationDiv.innerHTML = `<p style="color: red;">Erro: ${error.message}</p>`;
+                notificationDiv.style.display = 'block';
+            } finally {
+                document.getElementById('addTaskSpinner').style.display = 'none';
+            }
+        }
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.content').forEach(content => content.classList.remove('active'));
+
+            document.querySelector(`.tab[data-tab="${tabName}"]`).classList.add('active');
+            document.getElementById(`${tabName}Content`).classList.add('active');
+
+            if (tabName === 'pending') renderPendingTasks();
+            if (tabName === 'users') renderUsers();
+            if (tabName === 'withdrawals') renderWithdrawals();
+            if (tabName === 'logout') {
+                adminToken = null;
+                localStorage.removeItem('taskinAdminToken');
+                document.getElementById('adminPanel').style.display = 'none';
+                document.getElementById('adminLogin').style.display = 'block';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('adminLoginForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const email = document.getElementById('adminEmail').value;
+                const password = document.getElementById('adminPassword').value;
+
+                try {
+                    const response = await apiRequest('/login', {
+                        method: 'POST',
+                        body: JSON.stringify({ email, password })
+                    });
+
+                    if (email === 'admin@taskin.com') {
+                        adminToken = response.token;
+                        localStorage.setItem('taskinAdminToken', adminToken);
+                        document.getElementById('adminLogin').style.display = 'none';
+                        document.getElementById('adminPanel').style.display = 'block';
+                        switchTab('pending');
+                    } else {
+                        showNotification('Acesso restrito a administradores.', 'error');
+                    }
+                } catch (error) {
+                    showNotification(`Erro: ${error.message}`, 'error');
+                }
+            });
+
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabName = this.getAttribute('data-tab');
+                    switchTab(tabName);
+                });
+            });
+
+            document.getElementById('addTaskForm').addEventListener('submit', addNewTask);
+
+            console.log('Painel Administrativo Taskin carregado.');
+        });
+    </script>
+</body>
+</html>
