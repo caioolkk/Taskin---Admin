@@ -962,21 +962,21 @@
                     method: 'POST',
                     body: JSON.stringify({ email, password })
                 });
-                if (response.token && response.user) {
+                //if (response.token && response.user) {
                     // --- VERIFICA SE O E-MAIL É O DO ADMIN ---
-                    if (response.user.email === 'admin@taskin.com') {
-                        adminToken = response.token;
-                        localStorage.setItem('taskinAdminToken', adminToken);
-                        document.getElementById('adminLogin').style.display = 'none';
-                        document.getElementById('adminPanel').style.display = 'block';
-                        switchTab('pending');
-                        showNotification('Bem-vindo ao painel administrativo!', 'success');
-                    } else {
-                        showNotification('Acesso negado. Área restrita a administradores.', 'error');
-                    }
-                } else {
-                    showNotification('Credenciais inválidas.', 'error');
-                }
+                   // if (response.user.email === 'admin@taskin.com') {
+                    //    adminToken = response.token;
+                       // localStorage.setItem('taskinAdminToken', adminToken);
+                      //  document.getElementById('adminLogin').style.display = 'none';
+                      //  document.getElementById('adminPanel').style.display = 'block';
+                      //  switchTab('pending');
+                       // showNotification('Bem-vindo ao painel administrativo!', 'success');
+                 //   } else {
+                    //    showNotification('Acesso negado. Área restrita a administradores.', 'error');
+                 //   }
+                //} else {
+                //    showNotification('Credenciais inválidas.', 'error');
+               // }
             } catch (error) {
                 showNotification(`Erro ao fazer login: ${error.message}`, 'error');
             } finally {
