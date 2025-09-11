@@ -943,49 +943,42 @@
             document.getElementById('adminLogin').style.display = 'block';
             showNotification('Você saiu do painel administrativo.', 'info');
         }
-        // --- INÍCIO DA ALTERAÇÃO CIRÚRGICA ---
-        // Função para lidar com login (CORRIGIDA)
+        // --- INÍCIO DA ALTERAÇÃO PRINCIPAL ---
+        // Função para lidar com login (MODIFICADA PARA ACESSO FIXO)
         async function handleLogin(e) {
             e.preventDefault();
             const email = document.getElementById('adminEmail').value.trim();
             const password = document.getElementById('adminPassword').value.trim();
-            if (!email || !password) {
-                showNotification('Por favor, preencha todos os campos.', 'error');
-                return;
-            }
-            try {
-                const loginBtn = document.querySelector('#adminLoginForm button[type="submit"]');
-                loginBtn.disabled = true;
-                loginBtn.innerHTML = '<i class="fas fa-spinner spinner"></i> Entrando...';
-                // --- CHAMA A ROTA DE LOGIN DO BACKEND ---
-                const response = await apiRequest('/login', {
-                    method: 'POST',
-                    body: JSON.stringify({ email, password })
-                });
-                //if (response.token && response.user) {
-                    // --- VERIFICA SE O E-MAIL É O DO ADMIN ---
-                   // if (response.user.email === 'admin@taskin.com') {
-                    //    adminToken = response.token;
-                       // localStorage.setItem('taskinAdminToken', adminToken);
-                      //  document.getElementById('adminLogin').style.display = 'none';
-                      //  document.getElementById('adminPanel').style.display = 'block';
-                      //  switchTab('pending');
-                       // showNotification('Bem-vindo ao painel administrativo!', 'success');
-                 //   } else {
-                    //    showNotification('Acesso negado. Área restrita a administradores.', 'error');
-                 //   }
-                //} else {
-                //    showNotification('Credenciais inválidas.', 'error');
-               // }
-            } catch (error) {
-                showNotification(`Erro ao fazer login: ${error.message}`, 'error');
-            } finally {
-                const loginBtn = document.querySelector('#adminLoginForm button[type="submit"]');
-                loginBtn.disabled = false;
-                loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Entrar';
+
+            // VALIDAÇÃO DIRETA DAS CREDENCIAIS NO FRONTEND
+            if (email === 'taskinadmin@taskin.com' && password === 'Lbrx15151810') {
+                try {
+                    const loginBtn = document.querySelector('#adminLoginForm button[type="submit"]');
+                    loginBtn.disabled = true;
+                    loginBtn.innerHTML = '<i class="fas fa-spinner spinner"></i> Entrando...';
+
+                    // --- SIMULA UM TOKEN PARA CONTINUAR O FLUXO DO SISTEMA ---
+                    adminToken = 'fake_admin_token_for_taskin';
+                    localStorage.setItem('taskinAdminToken', adminToken);
+
+                    // --- OCULTA O LOGIN E MOSTRA O PAINEL ---
+                    document.getElementById('adminLogin').style.display = 'none';
+                    document.getElementById('adminPanel').style.display = 'block';
+                    switchTab('pending');
+                    showNotification('Bem-vindo ao painel administrativo!', 'success');
+
+                } catch (error) {
+                    showNotification(`Erro ao acessar o painel: ${error.message}`, 'error');
+                } finally {
+                    const loginBtn = document.querySelector('#adminLoginForm button[type="submit"]');
+                    loginBtn.disabled = false;
+                    loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Entrar';
+                }
+            } else {
+                showNotification('E-mail ou senha incorretos. Acesso exclusivo para administradores.', 'error');
             }
         }
-        // --- FIM DA ALTERAÇÃO CIRÚRGICA ---
+        // --- FIM DA ALTERAÇÃO PRINCIPAL ---
         // Inicialização
         document.addEventListener('DOMContentLoaded', function() {
             // Verifica se já está logado
@@ -993,21 +986,13 @@
             if (savedToken) {
                 adminToken = savedToken;
                 // --- TENTA VALIDAR O TOKEN EXISTENTE ---
-                // Para isso, podemos fazer uma chamada simples a uma rota protegida.
-                // Vamos usar /admin/users, que é uma rota que só admin pode acessar.
-                apiRequest('/admin/users')
-                    .then(() => {
-                        // Se a chamada for bem-sucedida, o token é válido.
-                        document.getElementById('adminLogin').style.display = 'none';
-                        document.getElementById('adminPanel').style.display = 'block';
-                        switchTab('pending');
-                    })
-                    .catch(() => {
-                        // Se falhar, o token é inválido ou expirou.
-                        localStorage.removeItem('taskinAdminToken');
-                        showNotification('Sessão expirada. Por favor, faça login novamente.', 'info');
-                    });
+                // Como o token agora é fake, vamos considerar que ele é sempre válido.
+                // Em um cenário real, você faria uma chamada à API aqui.
+                document.getElementById('adminLogin').style.display = 'none';
+                document.getElementById('adminPanel').style.display = 'block';
+                switchTab('pending');
             }
+
             // Eventos
             document.getElementById('adminLoginForm').addEventListener('submit', handleLogin);
             document.querySelectorAll('.tab').forEach(tab => {
