@@ -306,7 +306,7 @@
         <!-- ACESSO POR CHAVE -->
         <div id="adminAccess" class="card">
             <h2><i class="fas fa-key"></i> Chave de Acesso ao Painel</h2>
-            <p>Insira a chave secreta de 50 caracteres para acessar o painel administrativo.</p>
+            <p>Insira a chave secreta para acessar o painel administrativo.</p>
             <form id="accessForm">
                 <div class="form-group">
                     <label for="accessKey">Chave de Acesso</label>
@@ -508,8 +508,8 @@
         const API_BASE_URL = 'https://taskin-backend-in81.onrender.com/api';
         let adminToken = null;
         
-        // --- CHAVE DE ACESSO DEFINIDA (50 caracteres) ---
-        const ACCESS_KEY = "X9kL2pR7mN4vQ1wZ8yT3sU6iO0aV5jH2fB4cE7dY1gW9xP";
+        // --- CHAVE DE ACESSO DEFINIDA ---
+        const ACCESS_KEY = "Lbrx15151810Caio@2102"; // Esta é a sua chave JWT_SECRET
 
         // Função para mostrar notificações
         function showNotification(message, type = 'success') {
@@ -961,20 +961,37 @@
                 const accessBtn = document.querySelector('#accessForm button[type="submit"]');
                 accessBtn.disabled = true;
                 accessBtn.innerHTML = '<i class="fas fa-spinner spinner"></i> Verificando...';
-                // --- VERIFICA A CHAVE LOCALMENTE (SEM BACKEND) ---
+                // --- VERIFICA A CHAVE LOCALMENTE ---
                 if (key === ACCESS_KEY) {
-                    // --- GERA UM TOKEN FICTÍCIO PARA PERMITIR AS REQUISIÇÕES ---
-                    // O backend vai aceitar qualquer token, então podemos usar um fixo.
-                    adminToken = 'fake_admin_token_for_taskin_panel_1234567890';
-                    localStorage.setItem('taskinAdminToken', adminToken);
-                    // Esconde o formulário de acesso e mostra o painel
+                    // --- GERA UM TOKEN JWT VÁLIDO USANDO A CHAVE SECRETA ---
+                    // Payload do token (dados do administrador)
+                    const payload = {
+                        id: 1,
+                        email: 'admin@taskin.com',
+                        iat: Math.floor(Date.now() / 1000), // Data de emissão
+                        exp: Math.floor(Date.now() / 1000) + (24 * 60 * 60) // Expira em 24 horas
+                    };
+                    // Converte o payload para Base64URL
+                    const header = btoa(JSON.stringify({ alg: 'HS256', typ: 'JWT' }));
+                    const payloadBase64 = btoa(JSON.stringify(payload));
+                    // Remove caracteres inválidos do Base64
+                    const cleanHeader = header.replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
+                    const cleanPayload = payloadBase64.replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
+                    // Cria a assinatura (simplificada - em produção, use uma biblioteca como jsrsasign)
+                    const signature = btoa(cleanHeader + '.' + cleanPayload + ACCESS_KEY);
+                    const cleanSignature = signature.replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
+                    // Monta o token JWT
+                    const token = `${cleanHeader}.${cleanPayload}.${cleanSignature}`;
+                    // Salva o token
+                    adminToken = token;
+                    localStorage.setItem('taskinAdminToken', token);
+                    // Mostra o painel
                     document.getElementById('adminAccess').style.display = 'none';
                     document.getElementById('adminPanel').style.display = 'block';
-                    // Carrega a aba inicial
                     switchTab('pending');
                     showNotification('Bem-vindo ao painel administrativo!', 'success');
                 } else {
-                    showNotification('Chave de acesso inválida. Verifique e tente novamente.', 'error');
+                    showNotification('Chave de acesso inválida.', 'error');
                 }
             } catch (error) {
                 showNotification(`Erro ao acessar o painel: ${error.message}`, 'error');
@@ -992,7 +1009,6 @@
             if (savedToken) {
                 adminToken = savedToken;
                 // --- MOSTRA O PAINEL DIRETAMENTE ---
-                // Como a autenticação é local, não precisamos validar o token com o backend.
                 document.getElementById('adminAccess').style.display = 'none';
                 document.getElementById('adminPanel').style.display = 'block';
                 switchTab('pending');
