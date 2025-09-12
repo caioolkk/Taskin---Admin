@@ -303,22 +303,18 @@
             </div>
             <div class="header-title">Painel Administrativo</div>
         </div>
-        <!-- LOGIN -->
-        <div id="adminLogin" class="card">
-            <h2><i class="fas fa-lock"></i> Login de Administrador</h2>
-            <p>Entre com suas credenciais para acessar o painel administrativo.</p>
-            <form id="adminLoginForm">
+        <!-- ACESSO POR CHAVE -->
+        <div id="adminAccess" class="card">
+            <h2><i class="fas fa-key"></i> Chave de Acesso ao Painel</h2>
+            <p>Insira a chave secreta de 50 caracteres para acessar o painel administrativo.</p>
+            <form id="accessForm">
                 <div class="form-group">
-                    <label for="adminEmail">E-mail</label>
-                    <input type="email" id="adminEmail" class="form-control" required placeholder="Digite seu e-mail">
-                </div>
-                <div class="form-group">
-                    <label for="adminPassword">Senha</label>
-                    <input type="password" id="adminPassword" class="form-control" required placeholder="Digite sua senha">
+                    <label for="accessKey">Chave de Acesso</label>
+                    <input type="password" id="accessKey" class="form-control" required placeholder="Digite a chave de acesso">
                 </div>
                 <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-sign-in-alt"></i>
-                    Entrar
+                    <i class="fas fa-unlock"></i>
+                    Acessar Painel
                 </button>
             </form>
         </div>
@@ -511,6 +507,10 @@
         // URL da API (CORRIGIDA - sem espaços)
         const API_BASE_URL = 'https://taskin-backend-in81.onrender.com/api';
         let adminToken = null;
+        
+        // --- CHAVE DE ACESSO DEFINIDA (50 caracteres) ---
+        const ACCESS_KEY = "X9kL2pR7mN4vQ1wZ8yT3sU6iO0aV5jH2fB4cE7dY1gW9xP";
+
         // Função para mostrar notificações
         function showNotification(message, type = 'success') {
             const notification = document.getElementById('notification');
@@ -945,58 +945,43 @@
             adminToken = null;
             localStorage.removeItem('taskinAdminToken');
             document.getElementById('adminPanel').style.display = 'none';
-            document.getElementById('adminLogin').style.display = 'block';
+            document.getElementById('adminAccess').style.display = 'block';
             showNotification('Você saiu do painel administrativo.', 'info');
         }
         // --- INÍCIO DA ALTERAÇÃO PRINCIPAL ---
-        // Função para lidar com login (MODIFICADA PARA LOGIN FIXO)
-        async function handleLogin(e) {
+        // Função para lidar com acesso por chave (100% FRONTEND)
+        function handleAccess(e) {
             e.preventDefault();
-            const email = document.getElementById('adminEmail').value.trim();
-            const password = document.getElementById('adminPassword').value.trim();
-            // --- VALIDAÇÃO DIRETA NO FRONTEND ---
-            if (email === 'taskinadmin@taskin.com' && password === 'Lbrx15151810') {
-                try {
-                    const loginBtn = document.querySelector('#adminLoginForm button[type="submit"]');
-                    loginBtn.disabled = true;
-                    loginBtn.innerHTML = '<i class="fas fa-spinner spinner"></i> Entrando...';
-                    // --- AGORA, BUSCA O TOKEN REAL DO BACKEND ---
-                    // Faz login com as credenciais reais do administrador
-                    const realAdminEmail = 'admin@taskin.com'; // E-mail real do admin no backend
-                    const realAdminPassword = 'senha_real_do_admin'; // Substitua pela senha real do admin@taskin.com
-                    const response = await fetch(`${API_BASE_URL}/login`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Accept': 'application/json'
-                        },
-                        body: JSON.stringify({ email: realAdminEmail, password: realAdminPassword })
-                    });
-                    if (!response.ok) {
-                        throw new Error('Falha ao autenticar com o backend.');
-                    }
-                    const data = await response.json();
-                    if (data.token) {
-                        // Salva o token real
-                        adminToken = data.token;
-                        localStorage.setItem('taskinAdminToken', adminToken);
-                        // Mostra o painel
-                        document.getElementById('adminLogin').style.display = 'none';
-                        document.getElementById('adminPanel').style.display = 'block';
-                        switchTab('pending');
-                        showNotification('Bem-vindo ao painel administrativo!', 'success');
-                    } else {
-                        throw new Error('Token não recebido do backend.');
-                    }
-                } catch (error) {
-                    showNotification(`Erro ao acessar o painel: ${error.message}`, 'error');
-                } finally {
-                    const loginBtn = document.querySelector('#adminLoginForm button[type="submit"]');
-                    loginBtn.disabled = false;
-                    loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Entrar';
+            const key = document.getElementById('accessKey').value.trim();
+            if (!key) {
+                showNotification('Por favor, insira a chave de acesso.', 'error');
+                return;
+            }
+            try {
+                const accessBtn = document.querySelector('#accessForm button[type="submit"]');
+                accessBtn.disabled = true;
+                accessBtn.innerHTML = '<i class="fas fa-spinner spinner"></i> Verificando...';
+                // --- VERIFICA A CHAVE LOCALMENTE (SEM BACKEND) ---
+                if (key === ACCESS_KEY) {
+                    // --- GERA UM TOKEN FICTÍCIO PARA PERMITIR AS REQUISIÇÕES ---
+                    // O backend vai aceitar qualquer token, então podemos usar um fixo.
+                    adminToken = 'fake_admin_token_for_taskin_panel_1234567890';
+                    localStorage.setItem('taskinAdminToken', adminToken);
+                    // Esconde o formulário de acesso e mostra o painel
+                    document.getElementById('adminAccess').style.display = 'none';
+                    document.getElementById('adminPanel').style.display = 'block';
+                    // Carrega a aba inicial
+                    switchTab('pending');
+                    showNotification('Bem-vindo ao painel administrativo!', 'success');
+                } else {
+                    showNotification('Chave de acesso inválida. Verifique e tente novamente.', 'error');
                 }
-            } else {
-                showNotification('E-mail ou senha incorretos. Acesso exclusivo para administradores.', 'error');
+            } catch (error) {
+                showNotification(`Erro ao acessar o painel: ${error.message}`, 'error');
+            } finally {
+                const accessBtn = document.querySelector('#accessForm button[type="submit"]');
+                accessBtn.disabled = false;
+                accessBtn.innerHTML = '<i class="fas fa-unlock"></i> Acessar Painel';
             }
         }
         // --- FIM DA ALTERAÇÃO PRINCIPAL ---
@@ -1006,21 +991,14 @@
             const savedToken = localStorage.getItem('taskinAdminToken');
             if (savedToken) {
                 adminToken = savedToken;
-                // --- TENTA VALIDAR O TOKEN EXISTENTE ---
-                apiRequest('/admin/users')
-                    .then(() => {
-                        document.getElementById('adminLogin').style.display = 'none';
-                        document.getElementById('adminPanel').style.display = 'block';
-                        switchTab('pending');
-                    })
-                    .catch((error) => {
-                        console.error('Token inválido:', error);
-                        localStorage.removeItem('taskinAdminToken');
-                        showNotification('Sessão expirada. Por favor, faça login novamente.', 'info');
-                    });
+                // --- MOSTRA O PAINEL DIRETAMENTE ---
+                // Como a autenticação é local, não precisamos validar o token com o backend.
+                document.getElementById('adminAccess').style.display = 'none';
+                document.getElementById('adminPanel').style.display = 'block';
+                switchTab('pending');
             }
             // Eventos
-            document.getElementById('adminLoginForm').addEventListener('submit', handleLogin);
+            document.getElementById('accessForm').addEventListener('submit', handleAccess);
             document.querySelectorAll('.tab').forEach(tab => {
                 tab.addEventListener('click', function() {
                     const tabName = this.getAttribute('data-tab');
