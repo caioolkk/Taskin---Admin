@@ -303,14 +303,14 @@
             </div>
             <div class="header-title">Painel Administrativo</div>
         </div>
-        <!-- ACESSO POR CHAVE -->
+        <!-- ACESSO POR SENHA -->
         <div id="adminAccess" class="card">
-            <h2><i class="fas fa-key"></i> Chave de Acesso ao Painel</h2>
-            <p>Insira a chave secreta de 100 caracteres para acessar o painel administrativo.</p>
+            <h2><i class="fas fa-key"></i> Acesso ao Painel Administrativo</h2>
+            <p>Insira a senha do administrador para acessar o painel.</p>
             <form id="accessForm">
                 <div class="form-group">
-                    <label for="accessKey">Chave de Acesso</label>
-                    <input type="password" id="accessKey" class="form-control" required placeholder="Digite a chave de acesso">
+                    <label for="accessKey">Senha</label>
+                    <input type="password" id="accessKey" class="form-control" required placeholder="Digite a senha">
                 </div>
                 <button type="submit" class="btn btn-primary">
                     <i class="fas fa-unlock"></i>
@@ -504,13 +504,9 @@
         </div>
     </div>
     <script>
-        // URL da API (CORRIGIDA - sem espaços)
+        // URL da API
         const API_BASE_URL = 'https://taskin-backend-in81.onrender.com/api';
         let adminToken = null;
-        
-        // --- CHAVE DE ACESSO DE 100 CARACTERES ---
-        const ACCESS_KEY = "K7xP9mR2sT5vY8zB1cN4fH6jL0qW3eU7iO0aV9dX2gZ5lQ8rN1pS4wA7tM0kI3yR6oJ9uF2hC5bE8nX1vL4sP7mK0oW3";
-
         // Função para mostrar notificações
         function showNotification(message, type = 'success') {
             const notification = document.getElementById('notification');
@@ -524,16 +520,16 @@
         }
         // Função para requisições à API
         async function apiRequest(url, options = {}) {
-            const defaultHeaders = { 
+            const defaultHeaders = {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json'
             };
             if (adminToken) {
                 defaultHeaders['Authorization'] = `Bearer ${adminToken}`;
             }
-            const config = { 
-                ...options, 
-                headers: { ...defaultHeaders, ...options.headers } 
+            const config = {
+                ...options,
+                headers: { ...defaultHeaders, ...options.headers }
             };
             try {
                 const response = await fetch(`${API_BASE_URL}${url}`, config);
@@ -625,8 +621,8 @@
             if (!confirm('Tem certeza que deseja aprovar esta tarefa? O valor será creditado no saldo do usuário.')) return;
             try {
                 showNotification('Aprovando tarefa...', 'info');
-                await apiRequest(`/admin/tasks/${taskId}/approve`, { 
-                    method: 'PUT' 
+                await apiRequest(`/admin/tasks/${taskId}/approve`, {
+                    method: 'PUT'
                 });
                 showNotification('Tarefa aprovada e saldo creditado com sucesso!', 'success');
                 renderPendingTasks();
@@ -640,8 +636,8 @@
             if (!confirm('Tem certeza que deseja recusar esta tarefa? O usuário não receberá o valor.')) return;
             try {
                 showNotification('Recusando tarefa...', 'info');
-                await apiRequest(`/admin/tasks/${taskId}/reject`, { 
-                    method: 'PUT' 
+                await apiRequest(`/admin/tasks/${taskId}/reject`, {
+                    method: 'PUT'
                 });
                 showNotification('Tarefa recusada com sucesso!', 'success');
                 renderPendingTasks();
@@ -842,8 +838,7 @@
                 submitBtn.innerHTML = '<i class="fas fa-plus"></i> Adicionar Tarefa';
             }
         }
-        // --- INÍCIO DA ALTERAÇÃO CIRÚRGICA ---
-        // Função para renderizar tarefas ativas (IMPLEMENTADA)
+        // Função para renderizar tarefas ativas
         async function renderActiveTasks() {
             const tableBody = document.getElementById('activeTasksTableBody');
             tableBody.innerHTML = `
@@ -855,7 +850,6 @@
                 </tr>
             `;
             try {
-                // --- CHAMA A NOVA ROTA DO BACKEND ---
                 const data = await apiRequest('/admin/tasks/active');
                 if (data.length === 0) {
                     tableBody.innerHTML = `
@@ -915,7 +909,6 @@
                 `;
             }
         }
-        // --- FIM DA ALTERAÇÃO CIRÚRGICA ---
         // Função para alternar entre abas
         function switchTab(tabName) {
             document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
@@ -948,65 +941,48 @@
             document.getElementById('adminAccess').style.display = 'block';
             showNotification('Você saiu do painel administrativo.', 'info');
         }
-        // --- INÍCIO DA ALTERAÇÃO PRINCIPAL ---
-        // Função para lidar com acesso por chave (100% FRONTEND)
-        function handleAccess(e) {
+        // --- INÍCIO DA ALTERAÇÃO PRINCIPAL: Função handleAccess corrigida ---
+        async function handleAccess(e) {
             e.preventDefault();
-            const key = document.getElementById('accessKey').value.trim();
-            if (!key) {
-                showNotification('Por favor, insira a chave de acesso.', 'error');
+            const password = document.getElementById('accessKey').value.trim();
+            if (!password) {
+                showNotification('Por favor, insira a senha.', 'error');
                 return;
             }
+            const accessBtn = document.querySelector('#accessForm button[type="submit"]');
+            const originalText = accessBtn.innerHTML;
+            accessBtn.disabled = true;
+            accessBtn.innerHTML = '<i class="fas fa-spinner spinner"></i> Verificando...';
             try {
-                const accessBtn = document.querySelector('#accessForm button[type="submit"]');
-                accessBtn.disabled = true;
-                accessBtn.innerHTML = '<i class="fas fa-spinner spinner"></i> Verificando...';
-                // --- VERIFICA A CHAVE LOCALMENTE ---
-                if (key === ACCESS_KEY) {
-                    // --- GERA UM TOKEN JWT VÁLIDO USANDO A CHAVE SECRETA DO BACKEND ---
-                    // A chave secreta do seu backend é: Lbrx15151810Caio@2102
-                    const JWT_SECRET = 'Lbrx15151810Caio@2102';
-                    // Payload do token (dados do administrador)
-                    const payload = {
-                        id: 1,
-                        email: 'admin@taskin.com', // O backend só permite acesso para este e-mail
-                        iat: Math.floor(Date.now() / 1000), // Data de emissão
-                        exp: Math.floor(Date.now() / 1000) + (24 * 60 * 60) // Expira em 24 horas
-                    };
-                    // Converte o payload para Base64URL
-                    const header = btoa(JSON.stringify({ alg: 'HS256', typ: 'JWT' }));
-                    const payloadBase64 = btoa(JSON.stringify(payload));
-                    // Remove caracteres inválidos do Base64
-                    const cleanHeader = header.replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
-                    const cleanPayload = payloadBase64.replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
-                    // Cria a assinatura
-                    const signatureInput = cleanHeader + '.' + cleanPayload;
-                    // Simulação simples de assinatura HMAC (em produção, use uma biblioteca como jsrsasign)
-                    let signature = '';
-                    for (let i = 0; i < signatureInput.length; i++) {
-                        signature += String.fromCharCode(signatureInput.charCodeAt(i) ^ JWT_SECRET.charCodeAt(i % JWT_SECRET.length));
-                    }
-                    signature = btoa(signature);
-                    const cleanSignature = signature.replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
-                    // Monta o token JWT
-                    const token = `${cleanHeader}.${cleanPayload}.${cleanSignature}`;
-                    // Salva o token
-                    adminToken = token;
-                    localStorage.setItem('taskinAdminToken', token);
-                    // Mostra o painel
-                    document.getElementById('adminAccess').style.display = 'none';
-                    document.getElementById('adminPanel').style.display = 'block';
-                    switchTab('pending');
-                    showNotification('Bem-vindo ao painel administrativo!', 'success');
-                } else {
-                    showNotification('Chave de acesso inválida.', 'error');
+                // Faz login como o usuário admin@taskin.com
+                const response = await fetch(`${API_BASE_URL}/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: 'admin@taskin.com',
+                        password: password
+                    })
+                });
+                const data = await response.json();
+                if (!response.ok) {
+                    throw new Error(data.error || 'Credenciais inválidas.');
                 }
+                // Salva o token JWT real fornecido pelo backend
+                adminToken = data.token;
+                localStorage.setItem('taskinAdminToken', data.token);
+                // Mostra o painel
+                document.getElementById('adminAccess').style.display = 'none';
+                document.getElementById('adminPanel').style.display = 'block';
+                switchTab('pending');
+                showNotification('Bem-vindo ao painel administrativo!', 'success');
             } catch (error) {
-                showNotification(`Erro ao acessar o painel: ${error.message}`, 'error');
+                console.error('Erro ao acessar o painel:', error);
+                showNotification(`Erro: ${error.message}`, 'error');
             } finally {
-                const accessBtn = document.querySelector('#accessForm button[type="submit"]');
                 accessBtn.disabled = false;
-                accessBtn.innerHTML = '<i class="fas fa-unlock"></i> Acessar Painel';
+                accessBtn.innerHTML = originalText;
             }
         }
         // --- FIM DA ALTERAÇÃO PRINCIPAL ---
@@ -1016,7 +992,6 @@
             const savedToken = localStorage.getItem('taskinAdminToken');
             if (savedToken) {
                 adminToken = savedToken;
-                // --- MOSTRA O PAINEL DIRETAMENTE ---
                 document.getElementById('adminAccess').style.display = 'none';
                 document.getElementById('adminPanel').style.display = 'block';
                 switchTab('pending');
