@@ -585,7 +585,7 @@
                             <span class="status-badge" style="background-color: #ebf8ff; color: #2b6cb0;">${task.network}</span>
                         </td>
                         <td>
-                            <strong>R$ ${task.value.toFixed(2)}</strong>
+                            <strong>R$ ${Number(task.value).toFixed(2)}</strong>
                         </td>
                         <td>${submittedAt}</td>
                         <td>
@@ -686,7 +686,7 @@
                         </td>
                         <td>${user.whatsapp || 'N/A'}</td>
                         <td>
-                            <strong style="color: #48bb78;">R$ ${user.balance.toFixed(2)}</strong>
+                            <strong style="color: #48bb78;">R$ ${Number(user.balance).toFixed(2)}</strong>
                         </td>
                         <td>${createdAt}</td>
                     `;
@@ -743,7 +743,7 @@
                             <div style="font-size: 12px; color: #718096; margin-top: 5px;">${withdrawal.user_email}</div>
                         </td>
                         <td>
-                            <strong style="color: #48bb78;">R$ ${withdrawal.amount.toFixed(2)}</strong>
+                            <strong style="color: #48bb78;">R$ ${Number(withdrawal.amount).toFixed(2)}</strong>
                         </td>
                         <td>
                             <div style="font-size: 12px; word-break: break-all;">${withdrawal.pix_key}</div>
@@ -878,7 +878,7 @@
                             <span class="status-badge" style="background-color: #ebf8ff; color: #2b6cb0;">${task.network}</span>
                         </td>
                         <td>
-                            <strong style="color: #48bb78;">R$ ${task.value.toFixed(2)}</strong>
+                            <strong style="color: #48bb78;">R$ ${Number(task.value).toFixed(2)}</strong>
                         </td>
                         <td>
                             <div style="width: 100%; background-color: #e2e8f0; height: 8px; border-radius: 4px; overflow: hidden;">
