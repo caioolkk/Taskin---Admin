@@ -423,11 +423,12 @@
                                     <th>Valor</th>
                                     <th>Conclusões</th>
                                     <th>Status</th>
+                                    <th>Ações</th>
                                 </tr>
                             </thead>
                             <tbody id="activeTasksTableBody">
                                 <tr>
-                                    <td colspan="6" style="text-align: center; padding: 40px;">
+                                    <td colspan="7" style="text-align: center; padding: 40px;">
                                         <div class="spinner"></div>
                                         <p style="margin-top: 10px;">Carregando tarefas ativas...</p>
                                     </td>
@@ -838,12 +839,26 @@
                 submitBtn.innerHTML = '<i class="fas fa-plus"></i> Adicionar Tarefa';
             }
         }
+        // Função para excluir tarefa
+        async function deleteTask(taskId) {
+            if (!confirm('Tem certeza que deseja excluir esta tarefa? Esta ação é irreversível e a tarefa será removida do sistema.')) return;
+            try {
+                showNotification('Excluindo tarefa...', 'info');
+                await apiRequest(`/admin/tasks/${taskId}`, {
+                    method: 'DELETE'
+                });
+                showNotification('Tarefa excluída com sucesso!', 'success');
+                renderActiveTasks();
+            } catch (error) {
+                showNotification(`Erro ao excluir tarefa: ${error.message}`, 'error');
+            }
+        }
         // Função para renderizar tarefas ativas
         async function renderActiveTasks() {
             const tableBody = document.getElementById('activeTasksTableBody');
             tableBody.innerHTML = `
                 <tr>
-                    <td colspan="6" style="text-align: center; padding: 40px;">
+                    <td colspan="7" style="text-align: center; padding: 40px;">
                         <div class="spinner"></div>
                         <p style="margin-top: 10px;">Carregando tarefas ativas...</p>
                     </td>
@@ -854,7 +869,7 @@
                 if (data.length === 0) {
                     tableBody.innerHTML = `
                         <tr>
-                            <td colspan="6" style="text-align: center; padding: 40px;">
+                            <td colspan="7" style="text-align: center; padding: 40px;">
                                 <i class="fas fa-tasks" style="font-size: 48px; color: #48bb78; margin-bottom: 20px;"></i>
                                 <h3 style="margin-bottom: 10px;">Nenhuma tarefa ativa</h3>
                                 <p>Não há tarefas ativas no momento.</p>
@@ -891,13 +906,18 @@
                         <td>
                             <span class="status-badge ${statusClass}">${task.status}</span>
                         </td>
+                        <td>
+                            <button class="btn btn-danger btn-sm" onclick="deleteTask(${task.id})">
+                                <i class="fas fa-trash"></i> Excluir
+                            </button>
+                        </td>
                     `;
                     tableBody.appendChild(row);
                 });
             } catch (error) {
                 tableBody.innerHTML = `
                     <tr>
-                        <td colspan="6" style="text-align: center; padding: 40px;">
+                        <td colspan="7" style="text-align: center; padding: 40px;">
                             <i class="fas fa-exclamation-triangle" style="font-size: 48px; color: #e53e3e; margin-bottom: 20px;"></i>
                             <h3 style="margin-bottom: 10px;">Erro ao carregar tarefas</h3>
                             <p style="color: #e53e3e;">${error.message}</p>
