@@ -858,11 +858,13 @@
                 submitBtn.innerHTML = '<i class="fas fa-plus"></i> Adicionar Tarefa';
             }
         }
+        // --- INÍCIO DA ALTERAÇÃO PRINCIPAL: Função deleteTask corrigida ---
         // Função para excluir tarefa
         async function deleteTask(taskId) {
             if (!confirm('Tem certeza que deseja excluir esta tarefa? Esta ação é irreversível e a tarefa será removida do sistema.')) return;
             try {
                 showNotification('Excluindo tarefa...', 'info');
+                // Correção: Usa o método DELETE na rota correta
                 await apiRequest(`/admin/tasks/${taskId}`, {
                     method: 'DELETE'
                 });
@@ -872,6 +874,7 @@
                 showNotification(`Erro ao excluir tarefa: ${error.message}`, 'error');
             }
         }
+        // --- FIM DA ALTERAÇÃO PRINCIPAL ---
         // Função para renderizar tarefas ativas
         async function renderActiveTasks() {
             const tableBody = document.getElementById('activeTasksTableBody');
@@ -972,14 +975,18 @@
                 handleLogout();
             }
         }
+        // --- INÍCIO DA ALTERAÇÃO PRINCIPAL: Função handleLogout corrigida ---
         // Função para lidar com logout
         function handleLogout() {
             adminToken = null;
             localStorage.removeItem('taskinAdminToken');
             document.getElementById('adminPanel').style.display = 'none';
             document.getElementById('adminAccess').style.display = 'block';
+            // Limpa o formulário de acesso
+            document.getElementById('accessForm').reset();
             showNotification('Você saiu do painel administrativo.', 'info');
         }
+        // --- FIM DA ALTERAÇÃO PRINCIPAL ---
         // --- INÍCIO DA ALTERAÇÃO PRINCIPAL: Função handleAccess corrigida ---
         async function handleAccess(e) {
             e.preventDefault();
