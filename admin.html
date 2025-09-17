@@ -352,7 +352,7 @@
                 <button class="tab" data-tab="withdrawals">
                     <i class="fas fa-money-bill-wave"></i> Saques
                 </button>
-                <button class="tab logout" data-tab="logout">
+                <button class="tab logout">
                     <i class="fas fa-sign-out-alt"></i> Sair
                 </button>
             </div>
@@ -858,13 +858,11 @@
                 submitBtn.innerHTML = '<i class="fas fa-plus"></i> Adicionar Tarefa';
             }
         }
-        // --- INÍCIO DA ALTERAÇÃO PRINCIPAL: Função deleteTask corrigida ---
         // Função para excluir tarefa
         async function deleteTask(taskId) {
             if (!confirm('Tem certeza que deseja excluir esta tarefa? Esta ação é irreversível e a tarefa será removida do sistema.')) return;
             try {
                 showNotification('Excluindo tarefa...', 'info');
-                // Correção: Usa o método DELETE na rota correta
                 await apiRequest(`/admin/tasks/${taskId}`, {
                     method: 'DELETE'
                 });
@@ -874,7 +872,6 @@
                 showNotification(`Erro ao excluir tarefa: ${error.message}`, 'error');
             }
         }
-        // --- FIM DA ALTERAÇÃO PRINCIPAL ---
         // Função para renderizar tarefas ativas
         async function renderActiveTasks() {
             const tableBody = document.getElementById('activeTasksTableBody');
@@ -971,23 +968,21 @@
                 renderWithdrawals();
             } else if (tabName === 'tasks') {
                 renderActiveTasks();
-            } else if (tabName === 'logout') {
-                handleLogout();
             }
+            // --- REMOVIDO: else if (tabName === 'logout') { handleLogout(); }
+            // O logout é tratado separadamente no evento de clique direto.
         }
-        // --- INÍCIO DA ALTERAÇÃO PRINCIPAL: Função handleLogout corrigida ---
         // Função para lidar com logout
         function handleLogout() {
             adminToken = null;
             localStorage.removeItem('taskinAdminToken');
             document.getElementById('adminPanel').style.display = 'none';
             document.getElementById('adminAccess').style.display = 'block';
-            // Limpa o formulário de acesso
+            // Opcional: Limpa o formulário de login
             document.getElementById('accessForm').reset();
-            showNotification('Você saiu do painel administrativo.', 'info');
+            showNotification('Você saiu com sucesso.', 'success');
         }
-        // --- FIM DA ALTERAÇÃO PRINCIPAL ---
-        // --- INÍCIO DA ALTERAÇÃO PRINCIPAL: Função handleAccess corrigida ---
+        // Função para lidar com acesso
         async function handleAccess(e) {
             e.preventDefault();
             const password = document.getElementById('accessKey').value.trim();
@@ -1031,7 +1026,6 @@
                 accessBtn.innerHTML = originalText;
             }
         }
-        // --- FIM DA ALTERAÇÃO PRINCIPAL ---
         // Inicialização
         document.addEventListener('DOMContentLoaded', function() {
             // Verifica se já está logado
@@ -1044,11 +1038,18 @@
             }
             // Eventos
             document.getElementById('accessForm').addEventListener('submit', handleAccess);
-            document.querySelectorAll('.tab').forEach(tab => {
+            // --- CORREÇÃO PRINCIPAL: Eventos de clique nas abas ---
+            // Adiciona evento para todas as abas EXCETO o botão de logout
+            document.querySelectorAll('.tab:not(.logout)').forEach(tab => {
                 tab.addEventListener('click', function() {
                     const tabName = this.getAttribute('data-tab');
                     switchTab(tabName);
                 });
+            });
+            // Adiciona evento ESPECÍFICO e DIRETO para o botão de logout
+            document.querySelector('.tab.logout').addEventListener('click', function(e) {
+                e.preventDefault(); // Previne qualquer comportamento padrão indesejado
+                handleLogout();
             });
             document.getElementById('addTaskForm').addEventListener('submit', addNewTask);
             console.log('Painel Administrativo Taskin carregado.');
