@@ -4,92 +4,135 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Taskin - Painel Administrativo</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Import Google Fonts (Inter + Space Grotesk) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Import FontAwesome CDN -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Import Particles.js -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        /* RESET E CONFIGURAÇÕES GERAIS */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f8fafc;
-            color: #2d3748;
+            background: #0f0f1a;
+            color: #e2e8f0;
             line-height: 1.6;
             overflow-x: hidden;
+            position: relative;
         }
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
+            position: relative;
+            z-index: 10;
         }
         h1, h2, h3 {
+            font-family: 'Space Grotesk', sans-serif;
             font-weight: 700;
             margin-bottom: 20px;
-            color: #2d3748;
+            background: linear-gradient(135deg, #667eea, #764ba2, #f093fb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
         h1 { font-size: 2rem; }
         h2 { font-size: 1.5rem; }
-        /* CARD */
+        /* CARD MODERNO */
         .card {
-            background: white;
-            border-radius: 12px;
-            padding: 24px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             margin-bottom: 30px;
-            border: 1px solid #e2e8f0;
+            transition: all 0.4s ease;
         }
-        /* BOTÕES */
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+        }
+        /* BOTÕES FUTURISTAS */
         .btn {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            padding: 12px 24px;
-            border-radius: 8px;
+            padding: 14px 28px;
+            border-radius: 12px;
             font-weight: 600;
             font-size: 14px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             border: none;
             text-align: center;
             gap: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: 0.5s;
+        }
+        .btn:hover::before {
+            left: 100%;
         }
         .btn-primary {
-            background-color: #48bb78;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
         }
         .btn-primary:hover {
-            background-color: #38a169;
-            transform: translateY(-1px);
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 30px rgba(102, 126, 234, 0.5);
         }
         .btn-success {
-            background-color: #38a169;
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
             color: white;
         }
         .btn-success:hover {
-            background-color: #2f855a;
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 30px rgba(72, 187, 120, 0.5);
         }
         .btn-danger {
-            background-color: #e53e3e;
+            background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
             color: white;
         }
         .btn-danger:hover {
-            background-color: #c53030;
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 30px rgba(229, 62, 62, 0.5);
         }
         .btn-secondary {
-            background-color: #e2e8f0;
-            color: #2d3748;
+            background: rgba(255, 255, 255, 0.1);
+            color: #e2e8f0;
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
         .btn-secondary:hover {
-            background-color: #cbd5e0;
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-3px);
         }
         .btn:disabled {
             opacity: 0.6;
             cursor: not-allowed;
             transform: none;
         }
-        /* TABELAS */
+        /* TABELAS MODERNAS */
         .table-container {
             overflow-x: auto;
-            border-radius: 8px;
-            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(15, 15, 26, 0.5);
+            backdrop-filter: blur(12px);
         }
         table {
             width: 100%;
@@ -99,46 +142,51 @@
         th, td {
             padding: 16px;
             text-align: left;
-            border-bottom: 1px solid #e2e8f0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
         th {
-            background-color: #f7fafc;
+            background: rgba(102, 126, 234, 0.1);
             font-weight: 600;
             text-transform: uppercase;
             font-size: 12px;
             letter-spacing: 0.5px;
-            color: #4a5568;
         }
         tr:last-child td {
             border-bottom: none;
         }
         tr:hover {
-            background-color: #f8fafc;
+            background: rgba(255, 255, 255, 0.05);
         }
         /* STATUS */
         .status-badge {
             display: inline-block;
-            padding: 4px 12px;
+            padding: 6px 16px;
             border-radius: 20px;
             font-size: 12px;
             font-weight: 600;
             text-transform: uppercase;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
         .status-pending {
-            background-color: #fefcbf;
-            color: #b7791f;
+            background: rgba(254, 252, 191, 0.2);
+            color: #f6e05e;
+            border-color: rgba(246, 224, 94, 0.3);
         }
         .status-approved {
-            background-color: #f0fff4;
-            color: #2f855a;
+            background: rgba(240, 255, 244, 0.2);
+            color: #68d391;
+            border-color: rgba(104, 211, 145, 0.3);
         }
         .status-rejected {
-            background-color: #fed7d7;
-            color: #c53030;
+            background: rgba(254, 215, 215, 0.2);
+            color: #fc8181;
+            border-color: rgba(252, 129, 129, 0.3);
         }
         .status-paid {
-            background-color: #f0fff4;
-            color: #2f855a;
+            background: rgba(240, 255, 244, 0.2);
+            color: #68d391;
+            border-color: rgba(104, 211, 145, 0.3);
         }
         /* NOTIFICAÇÕES */
         .notification {
@@ -146,137 +194,160 @@
             top: 20px;
             right: 20px;
             padding: 16px 24px;
-            border-radius: 8px;
+            border-radius: 12px;
             color: white;
             font-weight: 600;
             font-size: 14px;
             z-index: 1000;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
             transform: translateX(150%);
-            transition: transform 0.3s ease;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             display: flex;
             align-items: center;
             gap: 12px;
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
         .notification.show {
             transform: translateX(0);
         }
         .notification.success {
-            background-color: #48bb78;
+            background: linear-gradient(135deg, #48bb78, #38a169);
         }
         .notification.error {
-            background-color: #e53e3e;
+            background: linear-gradient(135deg, #e53e3e, #c53030);
         }
         .notification.info {
-            background-color: #4299e1;
+            background: linear-gradient(135deg, #4299e1, #3182ce);
         }
-        /* TABS */
+        /* TABS FUTURISTAS */
         .tabs {
             display: flex;
-            gap: 4px;
+            gap: 8px;
             margin-bottom: 30px;
-            background: white;
-            padding: 8px;
-            border-radius: 12px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-            border: 1px solid #e2e8f0;
+            background: rgba(15, 15, 26, 0.5);
+            padding: 12px;
+            border-radius: 16px;
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             flex-wrap: wrap;
         }
         .tab {
-            padding: 12px 24px;
-            border-radius: 8px;
+            padding: 14px 24px;
+            border-radius: 12px;
             cursor: pointer;
             font-weight: 600;
             font-size: 14px;
-            transition: all 0.3s ease;
-            background: transparent;
-            border: none;
-            color: #4a5568;
-            white-space: nowrap;
+            transition: all 0.4s ease;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #e2e8f0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         .tab:hover {
-            background: #f7fafc;
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
         }
         .tab.active {
-            background: #48bb78;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
+            border: none;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
         }
         .tab.logout {
             margin-left: auto;
-            background: #e53e3e;
+            background: linear-gradient(135deg, #e53e3e, #c53030);
             color: white;
+            border: none;
         }
         .tab.logout:hover {
-            background: #c53030;
+            background: linear-gradient(135deg, #c53030, #9b2c2c);
+            transform: translateY(-2px);
         }
-        /* FORMULÁRIOS */
+        /* FORMULÁRIOS MODERNOS */
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 24px;
         }
         .form-group label {
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
             font-weight: 600;
-            color: #2d3748;
+            color: #cbd5e0;
+            font-size: 16px;
         }
         .form-control {
             width: 100%;
-            padding: 12px 16px;
-            border: 2px solid #e2e8f0;
-            border-radius: 8px;
+            padding: 16px 20px;
+            border-radius: 12px;
             font-size: 16px;
-            transition: border-color 0.3s;
-            font-family: 'Inter', sans-serif;
+            transition: all 0.4s ease;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #e2e8f0;
+            backdrop-filter: blur(12px);
         }
         .form-control:focus {
             outline: none;
-            border-color: #48bb78;
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.1);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.3);
         }
         .form-row {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
+            gap: 24px;
         }
         /* SPINNER */
         .spinner {
             display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 2px solid #f3f3f3;
-            border-top: 2px solid #48bb78;
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top: 3px solid #667eea;
             border-radius: 50%;
             animation: spin 1s linear infinite;
             vertical-align: middle;
-            margin-left: 8px;
         }
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-        /* HEADER */
+        /* HEADER FUTURISTA */
         .header {
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            margin-bottom: 30px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-            border: 1px solid #e2e8f0;
+            background: rgba(15, 15, 26, 0.7);
+            backdrop-filter: blur(12px);
+            padding: 30px;
+            border-radius: 20px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             display: flex;
             align-items: center;
-            gap: 16px;
+            gap: 20px;
+            text-align: center;
         }
         .header-logo {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 16px;
+            font-family: 'Space Grotesk', sans-serif;
             font-weight: 700;
-            font-size: 1.5rem;
-            color: #48bb78;
+            font-size: 2rem;
+            background: linear-gradient(135deg, #667eea, #f093fb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
         .header-title {
-            font-size: 1.25rem;
+            font-size: 1.5rem;
             font-weight: 600;
-            color: #2d3748;
+            background: linear-gradient(135deg, #667eea, #764ba2, #f093fb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
         /* RESPONSIVE */
         @media (max-width: 768px) {
@@ -285,14 +356,10 @@
             }
             .header {
                 flex-direction: column;
-                text-align: center;
+                padding: 20px;
             }
             .form-row {
                 grid-template-columns: 1fr;
-            }
-            .btn {
-                padding: 10px 16px;
-                font-size: 14px;
             }
             .tabs {
                 flex-wrap: wrap;
@@ -300,7 +367,7 @@
             }
             .tab.logout {
                 margin-left: 0;
-                margin-top: 10px;
+                margin-top: 15px;
                 width: 100%;
             }
             table {
@@ -310,18 +377,48 @@
                 padding: 12px 8px;
                 font-size: 14px;
             }
+            .btn {
+                padding: 12px 20px;
+                font-size: 14px;
+            }
+        }
+        /* ANIMAÇÕES ADICIONAIS */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        .floating {
+            animation: float 6s ease-in-out infinite;
+        }
+        /* BADGE DE NOVIDADE */
+        .badge {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: 700;
+            z-index: 10;
         }
     </style>
 </head>
 <body>
+    <!-- CANVAS DE PARTÍCULAS -->
+    <div id="particles-js" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;"></div>
+
     <div class="container">
-        <div class="header">
+        <div class="header floating">
             <div class="header-logo">
-                <i class="fas fa-tachometer-alt"></i>
+                <i class="fas fa-shield-alt"></i>
                 <span>Taskin Admin</span>
             </div>
-            <div class="header-title">Painel Administrativo</div>
+            <div class="header-title">Painel Administrativo • Sistema Anti-Burla Ativado</div>
         </div>
+
         <!-- ACESSO POR SENHA -->
         <div id="adminAccess" class="card">
             <h2><i class="fas fa-key"></i> Acesso ao Painel Administrativo</h2>
@@ -337,16 +434,11 @@
                 </button>
             </form>
         </div>
+
         <!-- PAINEL ADMIN -->
         <div id="adminPanel" style="display: none;">
             <div class="tabs">
-                <button class="tab active" data-tab="pending">
-                    <i class="fas fa-clock"></i> Tarefas Pendentes
-                </button>
-                <button class="tab" data-tab="tasks">
-                    <i class="fas fa-plus-circle"></i> Gerenciar Tarefas
-                </button>
-                <button class="tab" data-tab="users">
+                <button class="tab active" data-tab="users">
                     <i class="fas fa-users"></i> Usuários
                 </button>
                 <button class="tab" data-tab="withdrawals">
@@ -356,112 +448,12 @@
                     <i class="fas fa-sign-out-alt"></i> Sair
                 </button>
             </div>
-            <!-- TAREFAS PENDENTES -->
-            <div id="pendingContent" class="content active">
-                <div class="card">
-                    <h2><i class="fas fa-tasks"></i> Tarefas Pendentes de Aprovação</h2>
-                    <p>Aqui você pode aprovar ou recusar as tarefas enviadas pelos usuários.</p>
-                    <div id="pendingTasksContainer" class="table-container">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Tarefa</th>
-                                    <th>Usuário</th>
-                                    <th>Rede</th>
-                                    <th>Valor</th>
-                                    <th>Enviado em</th>
-                                    <th>Ações</th>
-                                </tr>
-                            </thead>
-                            <tbody id="pendingTasksTableBody">
-                                <tr>
-                                    <td colspan="6" style="text-align: center; padding: 40px;">
-                                        <div class="spinner"></div>
-                                        <p style="margin-top: 10px;">Carregando tarefas pendentes...</p>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-            <!-- GERENCIAR TAREFAS -->
-            <div id="tasksContent" class="content">
-                <div class="card">
-                    <h2><i class="fas fa-plus-circle"></i> Adicionar Nova Tarefa</h2>
-                    <p>Preencha os campos abaixo para adicionar uma nova tarefa ao sistema.</p>
-                    <form id="addTaskForm">
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="taskTitle">Título da Tarefa</label>
-                                <input type="text" id="taskTitle" class="form-control" required placeholder="Ex: Cadastre-se no Netflix">
-                            </div>
-                            <div class="form-group">
-                                <label for="taskNetwork">Rede CPA/CPI</label>
-                                <input type="text" id="taskNetwork" class="form-control" required placeholder="Ex: CPALead, Mobidea">
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="taskSummary">Resumo (Curta descrição)</label>
-                                <input type="text" id="taskSummary" class="form-control" required placeholder="Ex: Crie conta grátis por 30 dias">
-                            </div>
-                            <div class="form-group">
-                                <label for="taskValue">Valor (R$)</label>
-                                <input type="number" id="taskValue" class="form-control" required min="0.01" step="0.01" placeholder="Ex: 1.50">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="taskDetails">Instruções Detalhadas</label>
-                            <textarea id="taskDetails" class="form-control" rows="4" required placeholder="Instruções completas para o usuário..."></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label for="taskLink">Link da Tarefa</label>
-                            <input type="url" id="taskLink" class="form-control" required placeholder="https://exemplo.com">
-                        </div>
-                        <div class="form-group">
-                            <label for="taskMaxCompletions">Máximo de Conclusões</label>
-                            <input type="number" id="taskMaxCompletions" class="form-control" required min="1" value="100" placeholder="Ex: 100">
-                        </div>
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-plus"></i>
-                            Adicionar Tarefa
-                        </button>
-                        <div id="addTaskNotification" style="margin-top: 20px; display: none;"></div>
-                    </form>
-                </div>
-                <div class="card" style="margin-top: 30px;">
-                    <h3><i class="fas fa-list"></i> Tarefas Ativas</h3>
-                    <div class="table-container">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Título</th>
-                                    <th>Rede</th>
-                                    <th>Valor</th>
-                                    <th>Conclusões</th>
-                                    <th>Status</th>
-                                    <th>Ações</th>
-                                </tr>
-                            </thead>
-                            <tbody id="activeTasksTableBody">
-                                <tr>
-                                    <td colspan="7" style="text-align: center; padding: 40px;">
-                                        <div class="spinner"></div>
-                                        <p style="margin-top: 10px;">Carregando tarefas ativas...</p>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
+
             <!-- USUÁRIOS -->
-            <div id="usersContent" class="content">
+            <div id="usersContent" class="content active">
                 <div class="card">
                     <h2><i class="fas fa-users"></i> Todos os Usuários</h2>
-                    <p>Lista completa de usuários cadastrados no sistema.</p>
+                    <p>Monitoramento em tempo real de usuários conectados pelo seu link.</p>
                     <div class="table-container">
                         <table>
                             <thead>
@@ -469,14 +461,13 @@
                                     <th>ID</th>
                                     <th>Nome</th>
                                     <th>E-mail</th>
-                                    <th>WhatsApp</th>
-                                    <th>Saldo (R$)</th>
+                                    <th>Device ID</th>
                                     <th>Criado em</th>
                                 </tr>
                             </thead>
                             <tbody id="usersTableBody">
                                 <tr>
-                                    <td colspan="6" style="text-align: center; padding: 40px;">
+                                    <td colspan="5" style="text-align: center; padding: 40px;">
                                         <div class="spinner"></div>
                                         <p style="margin-top: 10px;">Carregando usuários...</p>
                                     </td>
@@ -486,6 +477,7 @@
                     </div>
                 </div>
             </div>
+
             <!-- SAQUES -->
             <div id="withdrawalsContent" class="content">
                 <div class="card">
@@ -517,16 +509,19 @@
                 </div>
             </div>
         </div>
+
         <!-- NOTIFICAÇÃO -->
         <div id="notification" class="notification">
             <i class="fas fa-bell"></i>
             <span id="notificationMessage">Mensagem</span>
         </div>
     </div>
+
     <script>
         // URL da API
-        const API_BASE_URL = 'https://taskin-backend-in81.onrender.com/api';
+        const API_BASE_URL = 'http://localhost:3000/api'; // Ajuste conforme seu backend
         let adminToken = null;
+
         // Função para mostrar notificações
         function showNotification(message, type = 'success') {
             const notification = document.getElementById('notification');
@@ -538,6 +533,7 @@
                 notification.style.display = 'none';
             }, 3000);
         }
+
         // Função para requisições à API
         async function apiRequest(url, options = {}) {
             const defaultHeaders = {
@@ -563,114 +559,13 @@
                 throw error;
             }
         }
-        // Função para renderizar tarefas pendentes
-        async function renderPendingTasks() {
-            const tableBody = document.getElementById('pendingTasksTableBody');
-            tableBody.innerHTML = `
-                <tr>
-                    <td colspan="6" style="text-align: center; padding: 40px;">
-                        <div class="spinner"></div>
-                        <p style="margin-top: 10px;">Carregando tarefas pendentes...</p>
-                    </td>
-                </tr>
-            `;
-            try {
-                const data = await apiRequest('/admin/tasks/pending');
-                if (data.length === 0) {
-                    tableBody.innerHTML = `
-                        <tr>
-                            <td colspan="6" style="text-align: center; padding: 40px;">
-                                <i class="fas fa-check-circle" style="font-size: 48px; color: #48bb78; margin-bottom: 20px;"></i>
-                                <h3 style="margin-bottom: 10px;">Nenhuma tarefa pendente</h3>
-                                <p>Não há tarefas aguardando aprovação no momento.</p>
-                            </td>
-                        </tr>
-                    `;
-                    return;
-                }
-                tableBody.innerHTML = '';
-                data.forEach(task => {
-                    const row = document.createElement('tr');
-                    const submittedAt = new Date(task.submitted_at).toLocaleString('pt-BR');
-                    row.innerHTML = `
-                        <td>
-                            <strong>${task.title}</strong>
-                            <div style="font-size: 12px; color: #718096; margin-top: 5px;">${task.summary}</div>
-                        </td>
-                        <td>
-                            ${task.user_name}
-                            <div style="font-size: 12px; color: #718096; margin-top: 5px;">${task.user_email}</div>
-                        </td>
-                        <td>
-                            <span class="status-badge" style="background-color: #ebf8ff; color: #2b6cb0;">${task.network}</span>
-                        </td>
-                        <td>
-                            <strong>R$ ${Number(task.value).toFixed(2)}</strong>
-                        </td>
-                        <td>${submittedAt}</td>
-                        <td>
-                            <div style="display: flex; gap: 8px;">
-                                <button class="btn btn-success btn-sm" onclick="approveTask(${task.user_task_id})">
-                                    <i class="fas fa-check"></i> Aprovar
-                                </button>
-                                <button class="btn btn-danger btn-sm" onclick="rejectTask(${task.user_task_id})">
-                                    <i class="fas fa-times"></i> Recusar
-                                </button>
-                            </div>
-                        </td>
-                    `;
-                    tableBody.appendChild(row);
-                });
-            } catch (error) {
-                tableBody.innerHTML = `
-                    <tr>
-                        <td colspan="6" style="text-align: center; padding: 40px;">
-                            <i class="fas fa-exclamation-triangle" style="font-size: 48px; color: #e53e3e; margin-bottom: 20px;"></i>
-                            <h3 style="margin-bottom: 10px;">Erro ao carregar tarefas</h3>
-                            <p style="color: #e53e3e;">${error.message}</p>
-                            <button class="btn btn-primary" onclick="renderPendingTasks()" style="margin-top: 20px;">
-                                <i class="fas fa-redo"></i> Tentar novamente
-                            </button>
-                        </td>
-                    </tr>
-                `;
-            }
-        }
-        // Função para aprovar tarefa
-        async function approveTask(taskId) {
-            if (!confirm('Tem certeza que deseja aprovar esta tarefa? O valor será creditado no saldo do usuário.')) return;
-            try {
-                showNotification('Aprovando tarefa...', 'info');
-                await apiRequest(`/admin/tasks/${taskId}/approve`, {
-                    method: 'PUT'
-                });
-                showNotification('Tarefa aprovada e saldo creditado com sucesso!', 'success');
-                renderPendingTasks();
-                renderUsers(); // Atualiza também a lista de usuários para refletir o novo saldo
-            } catch (error) {
-                showNotification(`Erro ao aprovar tarefa: ${error.message}`, 'error');
-            }
-        }
-        // Função para recusar tarefa
-        async function rejectTask(taskId) {
-            if (!confirm('Tem certeza que deseja recusar esta tarefa? O usuário não receberá o valor.')) return;
-            try {
-                showNotification('Recusando tarefa...', 'info');
-                await apiRequest(`/admin/tasks/${taskId}/reject`, {
-                    method: 'PUT'
-                });
-                showNotification('Tarefa recusada com sucesso!', 'success');
-                renderPendingTasks();
-            } catch (error) {
-                showNotification(`Erro ao recusar tarefa: ${error.message}`, 'error');
-            }
-        }
+
         // Função para renderizar usuários
         async function renderUsers() {
             const tableBody = document.getElementById('usersTableBody');
             tableBody.innerHTML = `
                 <tr>
-                    <td colspan="6" style="text-align: center; padding: 40px;">
+                    <td colspan="5" style="text-align: center; padding: 40px;">
                         <div class="spinner"></div>
                         <p style="margin-top: 10px;">Carregando usuários...</p>
                     </td>
@@ -681,8 +576,8 @@
                 if (data.length === 0) {
                     tableBody.innerHTML = `
                         <tr>
-                            <td colspan="6" style="text-align: center; padding: 40px;">
-                                <i class="fas fa-users" style="font-size: 48px; color: #48bb78; margin-bottom: 20px;"></i>
+                            <td colspan="5" style="text-align: center; padding: 40px;">
+                                <i class="fas fa-users" style="font-size: 48px; color: #667eea; margin-bottom: 20px;"></i>
                                 <h3 style="margin-bottom: 10px;">Nenhum usuário encontrado</h3>
                                 <p>Ainda não há usuários cadastrados no sistema.</p>
                             </td>
@@ -698,15 +593,16 @@
                         <td><strong>${user.id}</strong></td>
                         <td>
                             ${user.name}
-                            <div style="font-size: 12px; color: #718096; margin-top: 5px;">ID: ${user.id}</div>
+                            <div style="font-size: 12px; color: #a0aec0; margin-top: 5px;">ID: ${user.id}</div>
                         </td>
                         <td>
                             ${user.email}
-                            <div style="font-size: 12px; color: #718096; margin-top: 5px;">${user.whatsapp || 'Sem WhatsApp'}</div>
+                            <div style="font-size: 12px; color: #a0aec0; margin-top: 5px;">${user.whatsapp || 'Sem WhatsApp'}</div>
                         </td>
-                        <td>${user.whatsapp || 'N/A'}</td>
                         <td>
-                            <strong style="color: #48bb78;">R$ ${Number(user.balance).toFixed(2)}</strong>
+                            <div style="font-size: 12px; word-break: break-all; color: #68d391;">
+                                ${user.device_id || 'N/A'}
+                            </div>
                         </td>
                         <td>${createdAt}</td>
                     `;
@@ -715,7 +611,7 @@
             } catch (error) {
                 tableBody.innerHTML = `
                     <tr>
-                        <td colspan="6" style="text-align: center; padding: 40px;">
+                        <td colspan="5" style="text-align: center; padding: 40px;">
                             <i class="fas fa-exclamation-triangle" style="font-size: 48px; color: #e53e3e; margin-bottom: 20px;"></i>
                             <h3 style="margin-bottom: 10px;">Erro ao carregar usuários</h3>
                             <p style="color: #e53e3e;">${error.message}</p>
@@ -727,6 +623,7 @@
                 `;
             }
         }
+
         // Função para renderizar saques
         async function renderWithdrawals() {
             const tableBody = document.getElementById('withdrawalsTableBody');
@@ -760,13 +657,13 @@
                         <td><strong>${withdrawal.id}</strong></td>
                         <td>
                             ${withdrawal.user_name}
-                            <div style="font-size: 12px; color: #718096; margin-top: 5px;">${withdrawal.user_email}</div>
+                            <div style="font-size: 12px; color: #a0aec0; margin-top: 5px;">${withdrawal.user_email}</div>
                         </td>
                         <td>
-                            <strong style="color: #48bb78;">R$ ${Number(withdrawal.amount).toFixed(2)}</strong>
+                            <strong style="color: #68d391;">R$ ${Number(withdrawal.amount).toFixed(2)}</strong>
                         </td>
                         <td>
-                            <div style="font-size: 12px; word-break: break-all;">${withdrawal.pix_key}</div>
+                            <div style="font-size: 12px; word-break: break-all; color: #a0aec0;">${withdrawal.pix_key}</div>
                         </td>
                         <td>${requestedAt}</td>
                         <td>
@@ -800,6 +697,7 @@
                 `;
             }
         }
+
         // Função para processar saque
         async function processWithdrawal(id, status) {
             const action = status === 'Pago' ? 'pagar' : 'recusar';
@@ -812,142 +710,12 @@
                 });
                 showNotification(`Saque ${status.toLowerCase()} com sucesso!`, 'success');
                 renderWithdrawals();
-                renderUsers(); // Atualiza também a lista de usuários para refletir o novo saldo
+                renderUsers();
             } catch (error) {
                 showNotification(`Erro ao processar saque: ${error.message}`, 'error');
             }
         }
-        // Função para adicionar nova tarefa
-        async function addNewTask(e) {
-            e.preventDefault();
-            const title = document.getElementById('taskTitle').value.trim();
-            const summary = document.getElementById('taskSummary').value.trim();
-            const details = document.getElementById('taskDetails').value.trim();
-            const link = document.getElementById('taskLink').value.trim();
-            const network = document.getElementById('taskNetwork').value.trim();
-            const value = parseFloat(document.getElementById('taskValue').value);
-            const max_completions = parseInt(document.getElementById('taskMaxCompletions').value);
-            const notificationDiv = document.getElementById('addTaskNotification');
-            notificationDiv.innerHTML = '';
-            notificationDiv.style.display = 'none';
-            // Validação
-            if (!title || !summary || !details || !link || !network || isNaN(value) || isNaN(max_completions)) {
-                showNotification('Por favor, preencha todos os campos corretamente.', 'error');
-                return;
-            }
-            try {
-                const submitBtn = document.querySelector('#addTaskForm button[type="submit"]');
-                submitBtn.disabled = true;
-                submitBtn.innerHTML = '<i class="fas fa-spinner spinner"></i> Adicionando...';
-                const response = await apiRequest('/admin/tasks', {
-                    method: 'POST',
-                    body: JSON.stringify({ title, summary, details, link, network, value, max_completions })
-                });
-                document.getElementById('addTaskForm').reset();
-                showNotification('Tarefa adicionada com sucesso!', 'success');
-                // Limpa o campo de notificação
-                notificationDiv.innerHTML = '';
-                notificationDiv.style.display = 'none';
-                // Atualiza a lista de tarefas ativas
-                renderActiveTasks();
-            } catch (error) {
-                showNotification(`Erro ao adicionar tarefa: ${error.message}`, 'error');
-            } finally {
-                const submitBtn = document.querySelector('#addTaskForm button[type="submit"]');
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = '<i class="fas fa-plus"></i> Adicionar Tarefa';
-            }
-        }
-        // Função para excluir tarefa
-        async function deleteTask(taskId) {
-            if (!confirm('Tem certeza que deseja excluir esta tarefa? Esta ação é irreversível e a tarefa será removida do sistema.')) return;
-            try {
-                showNotification('Excluindo tarefa...', 'info');
-                await apiRequest(`/admin/tasks/${taskId}`, {
-                    method: 'DELETE'
-                });
-                showNotification('Tarefa excluída com sucesso!', 'success');
-                renderActiveTasks();
-            } catch (error) {
-                showNotification(`Erro ao excluir tarefa: ${error.message}`, 'error');
-            }
-        }
-        // Função para renderizar tarefas ativas
-        async function renderActiveTasks() {
-            const tableBody = document.getElementById('activeTasksTableBody');
-            tableBody.innerHTML = `
-                <tr>
-                    <td colspan="7" style="text-align: center; padding: 40px;">
-                        <div class="spinner"></div>
-                        <p style="margin-top: 10px;">Carregando tarefas ativas...</p>
-                    </td>
-                </tr>
-            `;
-            try {
-                const data = await apiRequest('/admin/tasks/active');
-                if (data.length === 0) {
-                    tableBody.innerHTML = `
-                        <tr>
-                            <td colspan="7" style="text-align: center; padding: 40px;">
-                                <i class="fas fa-tasks" style="font-size: 48px; color: #48bb78; margin-bottom: 20px;"></i>
-                                <h3 style="margin-bottom: 10px;">Nenhuma tarefa ativa</h3>
-                                <p>Não há tarefas ativas no momento.</p>
-                            </td>
-                        </tr>
-                    `;
-                    return;
-                }
-                tableBody.innerHTML = '';
-                data.forEach(task => {
-                    const progress = Math.round((task.current_completions / task.max_completions) * 100);
-                    const statusClass = progress >= 100 ? 'status-rejected' : 'status-approved';
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td><strong>${task.id}</strong></td>
-                        <td>
-                            ${task.title}
-                            <div style="font-size: 12px; color: #718096; margin-top: 5px;">${task.network}</div>
-                        </td>
-                        <td>
-                            <span class="status-badge" style="background-color: #ebf8ff; color: #2b6cb0;">${task.network}</span>
-                        </td>
-                        <td>
-                            <strong style="color: #48bb78;">R$ ${Number(task.value).toFixed(2)}</strong>
-                        </td>
-                        <td>
-                            <div style="width: 100%; background-color: #e2e8f0; height: 8px; border-radius: 4px; overflow: hidden;">
-                                <div style="width: ${progress}%; background-color: #48bb78; height: 100%;"></div>
-                            </div>
-                            <div style="font-size: 12px; color: #718096; margin-top: 5px;">
-                                ${task.current_completions}/${task.max_completions} (${progress}%)
-                            </div>
-                        </td>
-                        <td>
-                            <span class="status-badge ${statusClass}">${task.status}</span>
-                        </td>
-                        <td>
-                            <button class="btn btn-danger btn-sm" onclick="deleteTask(${task.id})">
-                                <i class="fas fa-trash"></i> Excluir
-                            </button>
-                        </td>
-                    `;
-                    tableBody.appendChild(row);
-                });
-            } catch (error) {
-                tableBody.innerHTML = `
-                    <tr>
-                        <td colspan="7" style="text-align: center; padding: 40px;">
-                            <i class="fas fa-exclamation-triangle" style="font-size: 48px; color: #e53e3e; margin-bottom: 20px;"></i>
-                            <h3 style="margin-bottom: 10px;">Erro ao carregar tarefas</h3>
-                            <p style="color: #e53e3e;">${error.message}</p>
-                            <button class="btn btn-primary" onclick="renderActiveTasks()" style="margin-top: 20px;">
-                                <i class="fas fa-redo"></i> Tentar novamente
-                            </button>
-                        </td>
-                    </tr>
-                `;
-            }
-        }
+
         // Função para alternar entre abas
         function switchTab(tabName) {
             document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
@@ -959,29 +727,24 @@
             const activeContent = document.getElementById(`${tabName}Content`);
             activeContent.classList.add('active');
             activeContent.style.display = 'block';
-            // Carrega o conteúdo da aba selecionada
-            if (tabName === 'pending') {
-                renderPendingTasks();
-            } else if (tabName === 'users') {
+
+            if (tabName === 'users') {
                 renderUsers();
             } else if (tabName === 'withdrawals') {
                 renderWithdrawals();
-            } else if (tabName === 'tasks') {
-                renderActiveTasks();
             }
-            // --- REMOVIDO: else if (tabName === 'logout') { handleLogout(); }
-            // O logout é tratado separadamente no evento de clique direto.
         }
+
         // Função para lidar com logout
         function handleLogout() {
             adminToken = null;
             localStorage.removeItem('taskinAdminToken');
             document.getElementById('adminPanel').style.display = 'none';
             document.getElementById('adminAccess').style.display = 'block';
-            // Opcional: Limpa o formulário de login
             document.getElementById('accessForm').reset();
             showNotification('Você saiu com sucesso.', 'success');
         }
+
         // Função para lidar com acesso
         async function handleAccess(e) {
             e.preventDefault();
@@ -990,10 +753,12 @@
                 showNotification('Por favor, insira a senha.', 'error');
                 return;
             }
+
             const accessBtn = document.querySelector('#accessForm button[type="submit"]');
             const originalText = accessBtn.innerHTML;
             accessBtn.disabled = true;
             accessBtn.innerHTML = '<i class="fas fa-spinner spinner"></i> Verificando...';
+
             try {
                 // Faz login como o usuário admin@taskin.com
                 const response = await fetch(`${API_BASE_URL}/login`, {
@@ -1010,13 +775,13 @@
                 if (!response.ok) {
                     throw new Error(data.error || 'Credenciais inválidas.');
                 }
-                // Salva o token JWT real fornecido pelo backend
+
                 adminToken = data.token;
                 localStorage.setItem('taskinAdminToken', data.token);
-                // Mostra o painel
+
                 document.getElementById('adminAccess').style.display = 'none';
                 document.getElementById('adminPanel').style.display = 'block';
-                switchTab('pending');
+                switchTab('users');
                 showNotification('Bem-vindo ao painel administrativo!', 'success');
             } catch (error) {
                 console.error('Erro ao acessar o painel:', error);
@@ -1026,33 +791,56 @@
                 accessBtn.innerHTML = originalText;
             }
         }
+
         // Inicialização
         document.addEventListener('DOMContentLoaded', function() {
+            // Inicializa partículas
+            particlesJS('particles-js', {
+                particles: {
+                    number: { value: 50, density: { enable: true, value_area: 800 } },
+                    color: { value: '#667eea' },
+                    shape: { type: 'circle' },
+                    opacity: { value: 0.3, random: true },
+                    size: { value: 2, random: true },
+                    line_linked: { enable: true, distance: 150, color: '#667eea', opacity: 0.1, width: 1 },
+                    move: { enable: true, speed: 1, direction: 'none', random: true, straight: false, out_mode: 'out' }
+                },
+                interactivity: {
+                    events: {
+                        onhover: { enable: true, mode: 'repulse' },
+                        onclick: { enable: true, mode: 'push' }
+                    }
+                },
+                retina_detect: true
+            });
+
             // Verifica se já está logado
             const savedToken = localStorage.getItem('taskinAdminToken');
             if (savedToken) {
                 adminToken = savedToken;
                 document.getElementById('adminAccess').style.display = 'none';
                 document.getElementById('adminPanel').style.display = 'block';
-                switchTab('pending');
+                switchTab('users');
             }
+
             // Eventos
             document.getElementById('accessForm').addEventListener('submit', handleAccess);
-            // --- CORREÇÃO PRINCIPAL: Eventos de clique nas abas ---
-            // Adiciona evento para todas as abas EXCETO o botão de logout
+
+            // Eventos de clique nas abas
             document.querySelectorAll('.tab:not(.logout)').forEach(tab => {
                 tab.addEventListener('click', function() {
                     const tabName = this.getAttribute('data-tab');
                     switchTab(tabName);
                 });
             });
-            // Adiciona evento ESPECÍFICO e DIRETO para o botão de logout
+
+            // Evento de logout
             document.querySelector('.tab.logout').addEventListener('click', function(e) {
-                e.preventDefault(); // Previne qualquer comportamento padrão indesejado
+                e.preventDefault();
                 handleLogout();
             });
-            document.getElementById('addTaskForm').addEventListener('submit', addNewTask);
-            console.log('Painel Administrativo Taskin carregado.');
+
+            console.log('Painel Administrativo Taskin (Remasterizado) carregado.');
         });
     </script>
 </body>
